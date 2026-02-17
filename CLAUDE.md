@@ -16,3 +16,28 @@ Use `@/openspec/AGENTS.md` to learn:
 Keep this managed block so 'openspec update' can refresh the instructions.
 
 <!-- OPENSPEC:END -->
+
+## Tech Stack & Standards
+
+### Frontend
+- **Framework**: TanStack Start (React 19) + TypeScript
+- **Routing**: TanStack Router (File-based routing, Type-safe)
+- **State Management**: TanStack Query (Server state), Zustand (Client state)
+- **Styling**: Tailwind CSS v4, Shadcn/ui (Components), Hugeicons
+- **Forms**: TanStack Form + Zod
+- **Testing**: Vitest, React Testing Library, Playwright
+- **Tooling**: Biome (Linting/Formatting), Vite
+
+### Backend
+- **Framework**: FastAPI (Python 3.11+)
+- **Database**: PostgreSQL (Structured), Qdrant Cloud (Vector)
+- **ORM/Schema**: SQLAlchemy (ORM), Alembic (Migrations), Pydantic (Validation)
+- **Cache/Queue**: Redis, Redis Queue (RQ)
+- **Storage**: MinIO (S3-compatible)
+- **Auth**: (refer to specific implementation)
+
+### Infrastructure & Services
+- **Containerization**: Docker, Kubernetes (Phase 2)
+- **Maps**: Ola Krutrim Maps
+- **AI/LLM**: Tambo AI, Google Gemini, Azure OpenAI
+- **CI/CD**: GitHub Actions
