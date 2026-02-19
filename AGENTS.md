@@ -29,7 +29,7 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 - **Tooling**: Biome (Linting/Formatting), Vite
 
 ### Backend
-- **Framework**: FastAPI (Python 3.11+)
+- **Framework**: FastAPI (Python 3.13+)
 - **Database**: PostgreSQL (Structured), Qdrant Cloud (Vector)
 - **ORM/Schema**: SQLAlchemy (ORM), Alembic (Migrations), Pydantic (Validation)
 - **Cache/Queue**: Redis, Redis Queue (RQ)
