@@ -1,0 +1,3 @@
+// This directory contains composed ERP components
+// Components here are built on top of shadcn/ui primitives
+// Examples: AppShell, Sidebar, TopBar, Breadcrumbs, CommandPalette, DataTable, etc.

@@ -1,0 +1,205 @@
+# =============================================================================
+# AI-First ERP — Docker / Podman Compose (Development)
+# =============================================================================
+# Compatible with: docker compose v2, podman-compose >= 1.1
+#
+# Usage:
+#   podman-compose up -d              → start all services
+#   podman-compose up -d api          → start only the API (+ its deps)
+#   podman-compose logs -f api        → follow API logs
+#   podman-compose down -v            → stop + wipe volumes
+# =============================================================================
+
+services:
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # PostgreSQL
+  # ─────────────────────────────────────────────────────────────────────────
+  postgres:
+    image: docker.io/postgres:17-alpine
+    container_name: erp-postgres
+    restart: unless-stopped
+    env_file:
+      - ./app/backend/.env
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: erp_dev
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d erp_dev" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - erp-network
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Redis
+  # ─────────────────────────────────────────────────────────────────────────
+  redis:
+    image: docker.io/redis:7-alpine
+    container_name: erp-redis
+    restart: unless-stopped
+    command: >
+      redis-server --save 60 1 --loglevel warning --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - erp-network
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # MinIO (S3-compatible object storage)
+  # ─────────────────────────────────────────────────────────────────────────
+  minio:
+    image: docker.io/minio/minio:latest
+    container_name: erp-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio_data:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+    networks:
+      - erp-network
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # MinIO bucket initializer (one-shot)
+  # ─────────────────────────────────────────────────────────────────────────
+  minio-init:
+    image: docker.io/minio/mc:latest
+    container_name: erp-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+        mc alias set local http://minio:9000 minioadmin minioadmin &&
+        mc mb --ignore-existing local/erp-files &&
+        mc anonymous set download local/erp-files/public &&
+        echo 'MinIO bucket ready.'
+      "
+    networks:
+      - erp-network
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Alembic migrations (one-shot, runs before API)
+  # ─────────────────────────────────────────────────────────────────────────
+  migrate:
+    build:
+      context: ./app/backend
+      dockerfile: Dockerfile
+    container_name: erp-migrate
+    env_file:
+      - ./app/backend/.env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/erp_dev
+    command: [ "alembic", "upgrade", "head" ]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - erp-network
+    restart: "no"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # FastAPI backend
+  # ─────────────────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: ./app/backend
+      dockerfile: Dockerfile
+    container_name: erp-api
+    restart: unless-stopped
+    env_file:
+      - ./app/backend/.env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/erp_dev
+      REDIS_URL: redis://redis:6379/0
+      MINIO_ENDPOINT: minio:9000
+      APP_ENV: development
+      DEBUG: "true"
+    volumes:
+      - ./app/backend/keys:/app/keys:ro
+      - ./app/backend/app:/app/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    networks:
+      - erp-network
+    command: >
+      uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --log-level info
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Vite frontend (optional — start with --profile frontend)
+  # ─────────────────────────────────────────────────────────────────────────
+  frontend:
+    image: docker.io/node:22-alpine
+    container_name: erp-frontend
+    working_dir: /app
+    volumes:
+      - ./app/frontend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    command: sh -c "npm install -g pnpm && pnpm install && pnpm dev --host 0.0.0.0"
+    environment:
+      VITE_API_URL: http://localhost:8000
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - erp-network
+    profiles:
+      - frontend
+
+# ---------------------------------------------------------------------------
+# Named volumes
+# ---------------------------------------------------------------------------
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  minio_data:
+    driver: local
+
+# ---------------------------------------------------------------------------
+# Network
+# ---------------------------------------------------------------------------
+networks:
+  erp-network:
+    driver: bridge

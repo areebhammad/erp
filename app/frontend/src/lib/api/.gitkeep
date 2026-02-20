@@ -1,0 +1,2 @@
+// This directory contains typed API endpoint modules
+// All API calls go through the central Axios client defined in client.ts
