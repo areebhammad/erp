@@ -1,4 +1,0 @@
-// This directory contains WebSocket client implementation
-// - client.ts: Managed WebSocket with auto-reconnect, exponential backoff
-// - events.ts: Typed event union (NotificationEvent, DataChangedEvent, etc.)
-// - useWebSocket.ts: React hook for subscribing to channels

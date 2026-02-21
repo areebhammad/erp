@@ -23,7 +23,7 @@ across engineers. Each task includes a concrete validation criterion.
 - [x] Update `tsconfig.json` path aliases: `@/` → `src/`, `@components/` → `src/components/`, `@lib/` → `src/lib/`, `@store/` → `src/store/`
 - [x] Configure `vite.config.ts` with matching path aliases
 - [x] Add `vite-plugin-bundle-analyzer` and configure bundle size budget: initial chunk ≤ 150 KB gzip
-- [ ] **Validation:** `pnpm check` (Biome) and `pnpm tsc --noEmit` pass with zero errors
+- [x] **Validation:** `pnpm check` (Biome) and `pnpm tsc --noEmit` pass with zero errors
 
 ### 1.2 Environment Validation
 - [x] Add `VITE_API_URL`, `VITE_WS_URL`, `VITE_SENTRY_DSN`, `VITE_POSTHOG_KEY`, `VITE_POSTHOG_HOST` to `.env.example`
@@ -33,27 +33,27 @@ across engineers. Each task includes a concrete validation criterion.
   - `VITE_SENTRY_DSN`: required string
   - `VITE_POSTHOG_KEY`: required string
   - `VITE_POSTHOG_HOST`: required URL string (defaults to `https://app.posthog.com`)
-- [ ] **Validation:** Starting `pnpm dev` with a missing required env var throws a descriptive error and exits
+- [x] **Validation:** Starting `pnpm dev` with a missing required env var throws a descriptive error and exits
 
 ### 1.3 Security Headers via Nitro Middleware
 - [x] Create `src/server/middleware/security-headers.ts` with Nitro H3 event handler
 - [x] Apply headers: `Content-Security-Policy` (strict; allow `'self'`, Sentry, PostHog, WSS origin), `Strict-Transport-Security` (1 year + preload), `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy: geolocation=(), microphone=(), camera=()`
 - [x] Create `src/server/middleware/csrf.ts` — sets `__Host-csrf` cookie on every response via `Set-Cookie` with `Path=/; Secure; SameSite=Strict` (readable, NOT HttpOnly so JS can read it)
-- [ ] Register both middleware in `vite.config.ts` under `nitro.handlers`
-- [ ] **Validation:** `curl -I https://localhost:3000` shows all security headers; browser DevTools confirms CSP
+- [x] Register both middleware in `vite.config.ts` under `nitro.handlers`
+- [x] **Validation:** `curl -I https://localhost:3000` shows all security headers; browser DevTools confirms CSP
 
 ### 1.4 Biome Lint Rules
 - [x] Add `no-restricted-globals` rule: disallow `fetch`, `XMLHttpRequest`
 - [x] Add `no-restricted-imports` rule: disallow importing entity types (`Invoice`, `User`, etc.) in `src/store/` files
-- [ ] Add `no-restricted-syntax` rule: disallow `axios.create()` outside `src/lib/api/client.ts`
-- [ ] **Validation:** A test file with a bare `fetch()` call causes `pnpm lint` to fail
+- [x] Add `no-restricted-syntax` rule: disallow `axios.create()` outside `src/lib/api/client.ts`
+- [x] **Validation:** A test file with a bare `fetch()` call causes `pnpm lint` to fail
 
 ---
 
 ## Phase 2: Design Token System (Week 1)
 
 ### 2.1 CSS Design Tokens
-- [x] Define all CSS custom properties in `src/styles.css` under `:root {}` and `:root.dark {}`:
+- [ ] Define all CSS custom properties in `src/styles.css` under `:root {}` and `:root.dark {}`:
   - Brand colours (primary, secondary, accent with multiple shades)
   - Semantic colours (success, warning, error, info each with `-subtle`, `-foreground`, `-border` variants)
   - Neutral surface scale (`--color-surface`, `--color-surface-raised`, `--color-surface-overlay`, `--color-border`, `--color-border-strong`, `--color-text`, `--color-text-subtle`, `--color-text-disabled`)
@@ -62,17 +62,17 @@ across engineers. Each task includes a concrete validation criterion.
   - Radius scale (`--radius-sm`, `--radius-md`, `--radius-lg`, `--radius-full`)
   - Shadow scale (light and dark mode aware)
   - Z-index named layers
-- [x] Load Inter and JetBrains Mono from Google Fonts in `__root.tsx` `head()` handler with `preload` link tags
-- [x] Map all tokens to Tailwind v4 CSS variable utilities in `vite.config.ts`
+- [ ] Load Inter and JetBrains Mono from Google Fonts in `__root.tsx` `head()` handler with `preload` link tags
+- [ ] Map all tokens to Tailwind v4 CSS variable utilities in `vite.config.ts`
 - [ ] Add `axe-core` colour contrast check to Vitest (run against the design showcase HTML)
 - [ ] **Validation:** Dark mode toggle applies visually; `axe-core` passes 0 contrast violations
 
 ### 2.2 System Color Mode Initialisation (No Flash)
-- [x] Create `src/lib/color-mode.ts` with `initColorMode()` function that:
+- [ ] Create `src/lib/color-mode.ts` with `initColorMode()` function that:
   1. Reads `localStorage['ui-store']` for persisted `colorMode` preference
   2. Falls back to `window.matchMedia('(prefers-color-scheme: dark)')` if preference is `'system'`
   3. Synchronously applies `dark` class to `<html>` before first paint
-- [x] Inject `initColorMode()` as an inline `<script>` in `__root.tsx` `head()` (before CSS loads)
+- [ ] Inject `initColorMode()` as an inline `<script>` in `__root.tsx` `head()` (before CSS loads)
 - [ ] **Validation:** Set OS to dark mode; load page; no flash of light mode content at any point
 
 ---
@@ -80,7 +80,7 @@ across engineers. Each task includes a concrete validation criterion.
 ## Phase 3: Zustand Store Slices (Week 1–2)
 
 ### 3.1 Auth Store
-- [x] Implement `src/store/auth.ts` (Zustand, sessionStorage-backed via `persist`)
+- [ ] Implement `src/store/auth.ts` (Zustand, sessionStorage-backed via `persist`)
   - State: `user: User | null`, `sessionId: string | null`, `isAuthenticated: boolean` (computed)
   - Actions: `setUser(user, sessionId)`, `clearAuth()`
   - `clearAuth()` MUST also: call `queryClient.clear()`, dispatch `__session_clear` in `localStorage`
@@ -88,23 +88,23 @@ across engineers. Each task includes a concrete validation criterion.
 - [ ] **Validation:** Login → session stored; logout → store cleared; reload → store re-validated from `/auth/me`
 
 ### 3.2 Permissions Store
-- [x] Implement `src/store/permissions.ts` (Zustand, no persistence)
+- [ ] Implement `src/store/permissions.ts` (Zustand, no persistence)
   - State: `roles: string[]`, `permissions: Set<string>`, `featureFlags: Record<string, boolean>`
   - Actions: `setPermissions(roles, permissions, featureFlags)`, `clearPermissions()`
   - Methods: `can(resource, action): boolean`, `hasRole(role): boolean`
-- [x] Implement `<PermissionGate resource action fallback?>` component in `src/components/app/PermissionGate.tsx`
-- [x] Implement `<PermissionGate flag="feature_name">` variant for feature-flag gating
+- [ ] Implement `<PermissionGate resource action fallback?>` component in `src/components/app/PermissionGate.tsx`
+- [ ] Implement `<PermissionGate flag="feature_name">` variant for feature-flag gating
 - [ ] Add `window.focus` listener in `_app.tsx` to re-fetch and refresh permissions store
 - [ ] **Validation:** Admin changes user role in the backend; user focuses the tab → UI updates within 2 s without reload
 
 ### 3.3 Tenant Store
-- [x] Implement `src/store/tenant.ts` (Zustand, no persistence — fresh fetch on each session init)
+- [ ] Implement `src/store/tenant.ts` (Zustand, no persistence — fresh fetch on each session init)
   - State: `tenant: Tenant | null`, `subscriptionPlan`, `currency_code`, `locale`, `fiscal_year_start`, `gstin`
   - Actions: `setTenant(tenant)`, `clearTenant()`
 - [ ] **Validation:** Topbar displays correct company name and logo after login
 
 ### 3.4 UI Store
-- [x] Implement `src/store/ui.ts` (Zustand with `persist`, `partialize` to only persist `sidebarCollapsed`, `colorMode`, `locale`)
+- [ ] Implement `src/store/ui.ts` (Zustand with `persist`, `partialize` to only persist `sidebarCollapsed`, `colorMode`, `locale`)
   - State: `sidebarCollapsed`, `colorMode: 'light' | 'dark' | 'system'`, `locale`, `commandPaletteOpen`, `notifications: Notification[]` (max 100), `connectionStatus`
   - Actions: `toggleSidebar`, `setColorMode`, `setLocale`, `addNotification`, `dismissNotification`, `markAllNotificationsRead`, `setConnectionStatus`
   - `setColorMode` MUST call `initColorMode()` to apply `dark` class immediately
@@ -122,7 +122,7 @@ across engineers. Each task includes a concrete validation criterion.
 ## Phase 4: API Client (Week 2)
 
 ### 4.1 Axios Instance
-- [x] Create `src/lib/api/client.ts` with a single Axios instance:
+- [ ] Create `src/lib/api/client.ts` with a single Axios instance:
   - `baseURL: env.VITE_API_URL`
   - `withCredentials: true`
   - `timeout: 30000`
@@ -131,7 +131,7 @@ across engineers. Each task includes a concrete validation criterion.
 - [ ] **Validation:** Expired access token cookie → interceptor refreshes silently; expired refresh cookie → redirected
 
 ### 4.2 Exponential Backoff Retry
-- [x] Implement retry logic in the response interceptor:
+- [ ] Implement retry logic in the response interceptor:
   - Retry on 5xx and network errors (Axios error with no response)
   - 3 attempts max, delays: 500 ms, 1000 ms, 2000 ms (+100 ms jitter each)
   - ONLY retry GET, PUT, DELETE — never POST or PATCH
@@ -139,7 +139,7 @@ across engineers. Each task includes a concrete validation criterion.
 - [ ] **Validation:** Mock a 503 backend → client retries 3 times then surfaces `ApiError`
 
 ### 4.3 Circuit Breaker
-- [x] Implement `src/lib/api/circuit-breaker.ts`:
+- [ ] Implement `src/lib/api/circuit-breaker.ts`:
   - Counts consecutive API failures (all retries exhausted)
   - Opens after 5 consecutive failures within 60 s
   - In OPEN state: requests fail immediately with `ApiError { code: 'circuit_open' }`
@@ -150,20 +150,20 @@ across engineers. Each task includes a concrete validation criterion.
 - [ ] **Validation:** Mock 5 consecutive failures → circuit opens, banner appears, banner dismisses after probe succeeds
 
 ### 4.4 ApiError Class
-- [x] Create `src/lib/api/errors.ts` with `ApiError` class:
+- [ ] Create `src/lib/api/errors.ts` with `ApiError` class:
   - Properties: `status`, `code`, `message`, `details?: Record<string, string[]>`, `requestId`, `traceId?`
   - Static `fromAxiosError(e: AxiosError): ApiError` factory method
   - Sentry capture: `if (status >= 500) Sentry.captureException(this, { tags: { request_id } })`
 - [ ] **Validation:** 422 response maps field errors correctly; 500 triggers Sentry breadcrumb with request_id
 
 ### 4.5 API Endpoint Modules
-- [x] Create `src/lib/api/auth.ts`: `loginApi`, `registerApi`, `refreshApi`, `logoutApi`, `forgotPasswordApi`, `resetPasswordApi`, `getMeApi`, `verifyMfaApi`, `getSessionsApi`, `revokeSessionApi`, `revokeAllSessionsApi`, `getCsrfApi`
-- [x] Create `src/lib/api/tenant.ts`: `getCurrentTenantApi`, `updateTenantApi`
-- [x] Create `src/lib/api/permissions.ts`: `getMyPermissionsApi`
+- [ ] Create `src/lib/api/auth.ts`: `loginApi`, `registerApi`, `refreshApi`, `logoutApi`, `forgotPasswordApi`, `resetPasswordApi`, `getMeApi`, `verifyMfaApi`, `getSessionsApi`, `revokeSessionApi`, `revokeAllSessionsApi`, `getCsrfApi`
+- [ ] Create `src/lib/api/tenant.ts`: `getCurrentTenantApi`, `updateTenantApi`
+- [ ] Create `src/lib/api/permissions.ts`: `getMyPermissionsApi`
 - [ ] **Validation:** All functions are properly typed; `pnpm tsc --noEmit` passes
 
 ### 4.6 Query Key Factory
-- [x] Implement `src/lib/query/keys.ts` with hierarchical namespacing:
+- [ ] Implement `src/lib/query/keys.ts` with hierarchical namespacing:
   ```ts
   export const keys = {
     auth: { me: ['auth', 'me'] as const, sessions: ['auth', 'sessions'] as const },
@@ -175,7 +175,7 @@ across engineers. Each task includes a concrete validation criterion.
 - [ ] **Validation:** Key factory is fully typed (no `string[]` widening); TypeScript strict mode passes
 
 ### 4.7 Client Logger
-- [x] Create `src/lib/logger.ts` with `createLogger(module: string)` factory:
+- [ ] Create `src/lib/logger.ts` with `createLogger(module: string)` factory:
   - Levels: `debug`, `info`, `warn`, `error`
   - Production: only `warn` and `error` output
   - Development: all levels, formatted with module tag and timestamp
@@ -195,25 +195,25 @@ across engineers. Each task includes a concrete validation criterion.
 ## Phase 5: WebSocket Client (Week 2)
 
 ### 5.1 Managed WebSocket
-- [x] Implement `src/lib/ws/client.ts` as a class `WSClient`:
+- [ ] Implement `src/lib/ws/client.ts` as a class `WSClient`:
   - Constructor: `url`, `onMessage` callback, `onStatusChange` callback
   - `connect()`: creates WebSocket, listens to `onopen`, `onmessage`, `onclose`, `onerror`
   - `disconnect()`: graceful close
   - Reconnection: exponential backoff from 1 s to 30 s with ±500 ms jitter
   - On `onopen`: `onStatusChange('connected')` → calls `useUIStore.setConnectionStatus('connected')`
   - On `onclose/onerror`: `onStatusChange('disconnected')` → schedules reconnect attempt
-- [x] Implement `src/lib/ws/events.ts` as a typed discriminated union of all event types
-- [x] Implement `src/lib/ws/useWebSocket.ts` React hook that wraps `WSClient` and returns event subscription API
+- [ ] Implement `src/lib/ws/events.ts` as a typed discriminated union of all event types
+- [ ] Implement `src/lib/ws/useWebSocket.ts` React hook that wraps `WSClient` and returns event subscription API
 
 ### 5.2 WebSocket Context
 - [ ] Create `WSContext` in `src/lib/ws/context.ts` that holds the singleton `WSClient`
 - [ ] Mount the `WSClient` in `_app.tsx` (on layout mount) and expose via `WSContext.Provider`
-- [x] On `session_invalidated` event → call `clearAuth()` and redirect
-- [x] On `data_changed` event → call `queryClient.invalidateQueries` with the correct module keys
+- [ ] On `session_invalidated` event → call `clearAuth()` and redirect
+- [ ] On `data_changed` event → call `queryClient.invalidateQueries` with the correct module keys
 
 ### 5.3 Connection Status Indicator
-- [x] Add a connection status dot to `TopBar.tsx` using `useUIStore.connectionStatus`
-- [x] Green = connected; Amber = connecting/reconnecting; Red = disconnected for > 30 s
+- [ ] Add a connection status dot to `TopBar.tsx` using `useUIStore.connectionStatus`
+- [ ] Green = connected; Amber = connecting/reconnecting; Red = disconnected for > 30 s
 - [ ] Show the "Unable to reach server" banner (from AppShell) when `disconnected` for > 30 s
 
 ### 5.4 WebSocket Unit Tests
@@ -227,11 +227,11 @@ across engineers. Each task includes a concrete validation criterion.
 ## Phase 6: App Shell & Design Components (Week 2–3)
 
 ### 6.1 AppShell Layout
-- [x] Implement `src/components/app/AppShell.tsx`: CSS grid layout (sidebar | [topbar / main])
+- [ ] Implement `src/components/app/AppShell.tsx`: CSS grid layout (sidebar | [topbar / main])
 - [ ] Wire into `_app.tsx` as the layout wrapper
 
 ### 6.2 Sidebar
-- [x] Implement `src/components/app/Sidebar.tsx`:
+- [ ] Implement `src/components/app/Sidebar.tsx`:
   - Navigation groups from a static `navigation.ts` config (groups, items, required permission)
   - Filter items using `usePermissionsStore.can(resource, 'read')` — absent items not rendered
   - Active link detection via `useMatch` from TanStack Router → `aria-current="page"`
@@ -240,7 +240,7 @@ across engineers. Each task includes a concrete validation criterion.
   - Fully keyboard navigable (Tab / Shift+Tab through links, Escape to collapse focus trap)
 
 ### 6.3 TopBar
-- [x] Implement `src/components/app/TopBar.tsx`:
+- [ ] Implement `src/components/app/TopBar.tsx`:
   - Tenant logo with company-name fallback avatar (deterministic colour from `tenant.id`)
   - Breadcrumbs component (see below)
   - Connection status dot (from `useUIStore.connectionStatus`)
@@ -291,7 +291,7 @@ across engineers. Each task includes a concrete validation criterion.
 ## Phase 7: Auth UI (Week 3)
 
 ### 7.1 Login Page
-- [x] Implement `src/routes/login.tsx` with TanStack Form + Zod schema
+- [ ] Implement `src/routes/login.tsx` with TanStack Form + Zod schema
   - Fields: email (type=email), password (type=password with toggle show/hide)
   - Show session-expired banner if `?session_expired=true` in URL
   - Single-factor success → `setUser` + fetch tenant + fetch permissions → navigate to `/dashboard`
@@ -304,7 +304,7 @@ across engineers. Each task includes a concrete validation criterion.
   - `posthog.capture('user_logged_in', { method: 'password' })` on success
 
 ### 7.2 Register Page
-- [x] Implement `src/routes/register.tsx` with TanStack Form + Zod schema
+- [ ] Implement `src/routes/register.tsx` with TanStack Form + Zod schema
   - Fields: company_name, full_name, email, gstin (optional), password, confirm_password
   - Live password strength meter (12+ chars, complexity)
   - [ ] HIBP common-password bloom filter check
@@ -313,12 +313,12 @@ across engineers. Each task includes a concrete validation criterion.
   - `posthog.capture('tenant_registered')` on success
 
 ### 7.3 Forgot Password Page
-- [x] Implement `src/routes/forgot-password.tsx`
+- [ ] Implement `src/routes/forgot-password.tsx`
   - Email input; submit → show generic success copy regardless of email existence
   - Submit button disabled for 60 s after submission (countdown displayed)
 
 ### 7.4 Reset Password Page
-- [x] Implement `src/routes/reset-password.tsx`
+- [ ] Implement `src/routes/reset-password.tsx`
   - Read `token` from URL search params
   - New password + confirm password fields with same strength meter as register
   - On 400/410 from backend → display "Link expired" message with link to /forgot-password

@@ -1,23 +1,15 @@
-import { createRouter as createTanStackRouter } from "@tanstack/react-router";
-import { getContext } from "./integrations/tanstack-query/root-provider";
-import { routeTree } from "./routeTree.gen";
+import { createRouter } from '@tanstack/react-router';
 
-export function getRouter() {
-	const router = createTanStackRouter({
-		routeTree,
+// Import the generated route tree
+import { routeTree } from './routeTree.gen';
 
-		context: getContext(),
+// Create a new router instance
+export const getRouter = () => {
+  const router = createRouter({
+    routeTree,
+    scrollRestoration: true,
+    defaultPreloadStaleTime: 0,
+  });
 
-		scrollRestoration: true,
-		defaultPreload: "intent",
-		defaultPreloadStaleTime: 0,
-	});
-
-	return router;
-}
-
-declare module "@tanstack/react-router" {
-	interface Register {
-		router: ReturnType<typeof getRouter>;
-	}
-}
+  return router;
+};

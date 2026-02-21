@@ -1,5 +1,0 @@
-// This directory contains Zustand store slices
-// - auth.ts: User profile, isAuthenticated, sessionId
-// - permissions.ts: RBAC permission set, roles, feature flags
-// - tenant.ts: Current tenant context, subscription plan
-// - ui.ts: Sidebar state, color mode, locale, notifications

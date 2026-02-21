@@ -1,2 +1,1 @@
-// This directory contains TanStack Query hooks for API data fetching
-// Each hook wraps an API function and returns query/mutation objects
+// TanStack Query Hooks

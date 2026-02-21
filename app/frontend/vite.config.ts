@@ -1,40 +1,47 @@
-import { fileURLToPath, URL } from "node:url";
-import { paraglideVitePlugin } from "@inlang/paraglide-js";
-import tailwindcss from "@tailwindcss/vite";
-import { devtools } from "@tanstack/devtools-vite";
-import { tanstackStart } from "@tanstack/react-start/plugin/vite";
-import viteReact from "@vitejs/plugin-react";
-import { nitro } from "nitro/vite";
-import { defineConfig } from "vite";
-import viteTsConfigPaths from "vite-tsconfig-paths";
+import tailwindcss from '@tailwindcss/vite';
+import { devtools } from '@tanstack/devtools-vite';
+import { tanstackStart } from '@tanstack/react-start/plugin/vite';
+import viteReact from '@vitejs/plugin-react';
+import { nitro } from 'nitro/vite';
+import { defineConfig } from 'vite';
+// @ts-expect-error Types are missing
+import analyzer from 'vite-plugin-bundle-analyzer';
+import viteTsConfigPaths from 'vite-tsconfig-paths';
 
 const config = defineConfig({
-	resolve: {
-		alias: {
-			"@": fileURLToPath(new URL("./src", import.meta.url)),
-			"@components": fileURLToPath(
-				new URL("./src/components", import.meta.url),
-			),
-			"@lib": fileURLToPath(new URL("./src/lib", import.meta.url)),
-			"@store": fileURLToPath(new URL("./src/store", import.meta.url)),
-		},
-	},
-	plugins: [
-		devtools(),
-		paraglideVitePlugin({
-			project: "./project.inlang",
-			outdir: "./src/paraglide",
-			strategy: ["url", "baseLocale"],
-		}),
-		nitro({ rollupConfig: { external: [/^@sentry\//] } }),
-		// this is the plugin that enables path aliases
-		viteTsConfigPaths({
-			projects: ["./tsconfig.json"],
-		}),
-		tailwindcss(),
-		tanstackStart(),
-		viteReact(),
-	],
+  plugins: [
+    devtools(),
+    nitro({
+      handlers: [
+        {
+          route: '/**',
+          middleware: true,
+          handler: './src/server/middleware/security-headers.ts',
+        },
+        {
+          route: '/**',
+          middleware: true,
+          handler: './src/server/middleware/csrf.ts',
+        },
+      ],
+    }),
+    // this is the plugin that enables path aliases
+    viteTsConfigPaths({
+      projects: ['./tsconfig.json'],
+    }),
+    tailwindcss(),
+    tanstackStart(),
+    viteReact(),
+    analyzer({
+      analyzerMode: 'static',
+      openAnalyzer: false,
+      generateStatsFile: true,
+      statsOptions: { source: false },
+    }),
+  ],
+  build: {
+    chunkSizeWarningLimit: 150,
+  },
 });
 
 export default config;
