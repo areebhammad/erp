@@ -53,7 +53,7 @@ across engineers. Each task includes a concrete validation criterion.
 ## Phase 2: Design Token System (Week 1)
 
 ### 2.1 CSS Design Tokens
-- [ ] Define all CSS custom properties in `src/styles.css` under `:root {}` and `:root.dark {}`:
+- [x] Define all CSS custom properties in `src/styles.css` under `:root {}` and `:root.dark {}`:
   - Brand colours (primary, secondary, accent with multiple shades)
   - Semantic colours (success, warning, error, info each with `-subtle`, `-foreground`, `-border` variants)
   - Neutral surface scale (`--color-surface`, `--color-surface-raised`, `--color-surface-overlay`, `--color-border`, `--color-border-strong`, `--color-text`, `--color-text-subtle`, `--color-text-disabled`)
@@ -62,18 +62,18 @@ across engineers. Each task includes a concrete validation criterion.
   - Radius scale (`--radius-sm`, `--radius-md`, `--radius-lg`, `--radius-full`)
   - Shadow scale (light and dark mode aware)
   - Z-index named layers
-- [ ] Load Inter and JetBrains Mono from Google Fonts in `__root.tsx` `head()` handler with `preload` link tags
-- [ ] Map all tokens to Tailwind v4 CSS variable utilities in `vite.config.ts`
-- [ ] Add `axe-core` colour contrast check to Vitest (run against the design showcase HTML)
-- [ ] **Validation:** Dark mode toggle applies visually; `axe-core` passes 0 contrast violations
+- [x] Load Inter and JetBrains Mono from Google Fonts in `__root.tsx` `head()` handler with `preload` link tags
+- [x] Map all tokens to Tailwind v4 CSS variable utilities in `vite.config.ts`
+- [x] Add `axe-core` colour contrast check to Vitest (run against the design showcase HTML)
+- [x] **Validation:** Dark mode toggle applies visually; `axe-core` passes 0 contrast violations
 
 ### 2.2 System Color Mode Initialisation (No Flash)
-- [ ] Create `src/lib/color-mode.ts` with `initColorMode()` function that:
+- [x] Create `src/lib/color-mode.ts` with `initColorMode()` function that:
   1. Reads `localStorage['ui-store']` for persisted `colorMode` preference
   2. Falls back to `window.matchMedia('(prefers-color-scheme: dark)')` if preference is `'system'`
   3. Synchronously applies `dark` class to `<html>` before first paint
-- [ ] Inject `initColorMode()` as an inline `<script>` in `__root.tsx` `head()` (before CSS loads)
-- [ ] **Validation:** Set OS to dark mode; load page; no flash of light mode content at any point
+- [x] Inject `initColorMode()` as an inline `<script>` in `__root.tsx` `head()` (before CSS loads)
+- [x] **Validation:** Set OS to dark mode; load page; no flash of light mode content at any point
 
 ---
 

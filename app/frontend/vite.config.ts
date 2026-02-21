@@ -4,8 +4,6 @@ import { tanstackStart } from '@tanstack/react-start/plugin/vite';
 import viteReact from '@vitejs/plugin-react';
 import { nitro } from 'nitro/vite';
 import { defineConfig } from 'vite';
-// @ts-expect-error Types are missing
-import analyzer from 'vite-plugin-bundle-analyzer';
 import viteTsConfigPaths from 'vite-tsconfig-paths';
 
 const config = defineConfig({
@@ -32,12 +30,6 @@ const config = defineConfig({
     tailwindcss(),
     tanstackStart(),
     viteReact(),
-    analyzer({
-      analyzerMode: 'static',
-      openAnalyzer: false,
-      generateStatsFile: true,
-      statsOptions: { source: false },
-    }),
   ],
   build: {
     chunkSizeWarningLimit: 150,
