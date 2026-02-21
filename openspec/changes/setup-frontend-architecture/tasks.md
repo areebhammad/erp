@@ -80,90 +80,90 @@ across engineers. Each task includes a concrete validation criterion.
 ## Phase 3: Zustand Store Slices (Week 1–2)
 
 ### 3.1 Auth Store
-- [ ] Implement `src/store/auth.ts` (Zustand, sessionStorage-backed via `persist`)
+- [x] Implement `src/store/auth.ts` (Zustand, sessionStorage-backed via `persist`)
   - State: `user: User | null`, `sessionId: string | null`, `isAuthenticated: boolean` (computed)
   - Actions: `setUser(user, sessionId)`, `clearAuth()`
   - `clearAuth()` MUST also: call `queryClient.clear()`, dispatch `__session_clear` in `localStorage`
   - Explicitly exclude any token fields — TypeScript types should not allow them
-- [ ] **Validation:** Login → session stored; logout → store cleared; reload → store re-validated from `/auth/me`
+- [x] **Validation:** Login → session stored; logout → store cleared; reload → store re-validated from `/auth/me`
 
 ### 3.2 Permissions Store
-- [ ] Implement `src/store/permissions.ts` (Zustand, no persistence)
+- [x] Implement `src/store/permissions.ts` (Zustand, no persistence)
   - State: `roles: string[]`, `permissions: Set<string>`, `featureFlags: Record<string, boolean>`
   - Actions: `setPermissions(roles, permissions, featureFlags)`, `clearPermissions()`
   - Methods: `can(resource, action): boolean`, `hasRole(role): boolean`
-- [ ] Implement `<PermissionGate resource action fallback?>` component in `src/components/app/PermissionGate.tsx`
-- [ ] Implement `<PermissionGate flag="feature_name">` variant for feature-flag gating
-- [ ] Add `window.focus` listener in `_app.tsx` to re-fetch and refresh permissions store
-- [ ] **Validation:** Admin changes user role in the backend; user focuses the tab → UI updates within 2 s without reload
+- [x] Implement `<PermissionGate resource action fallback?>` component in `src/components/app/PermissionGate.tsx`
+- [x] Implement `<PermissionGate flag="feature_name">` variant for feature-flag gating
+- [x] Add `window.focus` listener in `_app.tsx` to re-fetch and refresh permissions store
+- [x] **Validation:** Admin changes user role in the backend; user focuses the tab → UI updates within 2 s without reload
 
 ### 3.3 Tenant Store
-- [ ] Implement `src/store/tenant.ts` (Zustand, no persistence — fresh fetch on each session init)
+- [x] Implement `src/store/tenant.ts` (Zustand, no persistence — fresh fetch on each session init)
   - State: `tenant: Tenant | null`, `subscriptionPlan`, `currency_code`, `locale`, `fiscal_year_start`, `gstin`
   - Actions: `setTenant(tenant)`, `clearTenant()`
-- [ ] **Validation:** Topbar displays correct company name and logo after login
+- [x] **Validation:** Topbar displays correct company name and logo after login
 
 ### 3.4 UI Store
-- [ ] Implement `src/store/ui.ts` (Zustand with `persist`, `partialize` to only persist `sidebarCollapsed`, `colorMode`, `locale`)
+- [x] Implement `src/store/ui.ts` (Zustand with `persist`, `partialize` to only persist `sidebarCollapsed`, `colorMode`, `locale`)
   - State: `sidebarCollapsed`, `colorMode: 'light' | 'dark' | 'system'`, `locale`, `commandPaletteOpen`, `notifications: Notification[]` (max 100), `connectionStatus`
   - Actions: `toggleSidebar`, `setColorMode`, `setLocale`, `addNotification`, `dismissNotification`, `markAllNotificationsRead`, `setConnectionStatus`
   - `setColorMode` MUST call `initColorMode()` to apply `dark` class immediately
   - `setLocale` MUST call `paraglide.setLocale(locale)`
-- [ ] **Validation:** Toggle sidebar; reload → preference preserved; switch to Hindi → UI strings change; dark mode → no flash
+- [x] **Validation:** Toggle sidebar; reload → preference preserved; switch to Hindi → UI strings change; dark mode → no flash
 
 ### 3.5 Store Unit Tests
-- [ ] Test auth store: `setUser`, `clearAuth`, sessionStorage persistence, cross-tab sync via `storage` event
-- [ ] Test permissions store: `can()`, `hasRole()`, `setPermissions/clearPermissions`
-- [ ] Test UI store: `addNotification` caps at 100 with FIFO eviction, `setColorMode` applies class
-- [ ] **Target:** 90%+ coverage for all store files
+- [x] Test auth store: `setUser`, `clearAuth`, sessionStorage persistence, cross-tab sync via `storage` event
+- [x] Test permissions store: `can()`, `hasRole()`, `setPermissions/clearPermissions`
+- [x] Test UI store: `addNotification` caps at 100 with FIFO eviction, `setColorMode` applies class
+- [x] **Target:** 90%+ coverage for all store files
 
 ---
 
 ## Phase 4: API Client (Week 2)
 
 ### 4.1 Axios Instance
-- [ ] Create `src/lib/api/client.ts` with a single Axios instance:
+- [x] Create `src/lib/api/client.ts` with a single Axios instance:
   - `baseURL: env.VITE_API_URL`
   - `withCredentials: true`
   - `timeout: 30000`
   - Request interceptor: attach `X-CSRF-Token` (read from `__Host-csrf` cookie), `X-Request-ID` (UUID v4), `Accept-Language` (from `useUIStore.locale`)
   - Response interceptor: 401 → silent refresh via `GET /api/v1/auth/refresh`, retry; second 401 → `clearAuth()` + redirect to `/login?session_expired=true`
-- [ ] **Validation:** Expired access token cookie → interceptor refreshes silently; expired refresh cookie → redirected
+- [x] **Validation:** Expired access token cookie → interceptor refreshes silently; expired refresh cookie → redirected
 
 ### 4.2 Exponential Backoff Retry
-- [ ] Implement retry logic in the response interceptor:
+- [x] Implement retry logic in the response interceptor:
   - Retry on 5xx and network errors (Axios error with no response)
   - 3 attempts max, delays: 500 ms, 1000 ms, 2000 ms (+100 ms jitter each)
   - ONLY retry GET, PUT, DELETE — never POST or PATCH
   - Increment a retry counter in the request config to prevent infinite loops
-- [ ] **Validation:** Mock a 503 backend → client retries 3 times then surfaces `ApiError`
+- [x] **Validation:** Mock a 503 backend → client retries 3 times then surfaces `ApiError`
 
 ### 4.3 Circuit Breaker
-- [ ] Implement `src/lib/api/circuit-breaker.ts`:
+- [x] Implement `src/lib/api/circuit-breaker.ts`:
   - Counts consecutive API failures (all retries exhausted)
   - Opens after 5 consecutive failures within 60 s
   - In OPEN state: requests fail immediately with `ApiError { code: 'circuit_open' }`
   - Probe request every 30 s (GET a lightweight `/health` endpoint)
   - On successful probe: circuit CLOSES, `useUIStore.setConnectionStatus('connected')`
   - Auth endpoints (`/auth/*`) bypass the circuit breaker
-- [ ] Wire `connectionStatus` into `useUIStore`; display banner in AppShell when disconnected
-- [ ] **Validation:** Mock 5 consecutive failures → circuit opens, banner appears, banner dismisses after probe succeeds
+- [x] Wire `connectionStatus` into `useUIStore`; display banner in AppShell when disconnected
+- [x] **Validation:** Mock 5 consecutive failures → circuit opens, banner appears, banner dismisses after probe succeeds
 
 ### 4.4 ApiError Class
-- [ ] Create `src/lib/api/errors.ts` with `ApiError` class:
+- [x] Create `src/lib/api/errors.ts` with `ApiError` class:
   - Properties: `status`, `code`, `message`, `details?: Record<string, string[]>`, `requestId`, `traceId?`
   - Static `fromAxiosError(e: AxiosError): ApiError` factory method
   - Sentry capture: `if (status >= 500) Sentry.captureException(this, { tags: { request_id } })`
-- [ ] **Validation:** 422 response maps field errors correctly; 500 triggers Sentry breadcrumb with request_id
+- [x] **Validation:** 422 response maps field errors correctly; 500 triggers Sentry breadcrumb with request_id
 
 ### 4.5 API Endpoint Modules
-- [ ] Create `src/lib/api/auth.ts`: `loginApi`, `registerApi`, `refreshApi`, `logoutApi`, `forgotPasswordApi`, `resetPasswordApi`, `getMeApi`, `verifyMfaApi`, `getSessionsApi`, `revokeSessionApi`, `revokeAllSessionsApi`, `getCsrfApi`
-- [ ] Create `src/lib/api/tenant.ts`: `getCurrentTenantApi`, `updateTenantApi`
-- [ ] Create `src/lib/api/permissions.ts`: `getMyPermissionsApi`
-- [ ] **Validation:** All functions are properly typed; `pnpm tsc --noEmit` passes
+- [x] Create `src/lib/api/auth.ts`: `loginApi`, `registerApi`, `refreshApi`, `logoutApi`, `forgotPasswordApi`, `resetPasswordApi`, `getMeApi`, `verifyMfaApi`, `getSessionsApi`, `revokeSessionApi`, `revokeAllSessionsApi`, `getCsrfApi`
+- [x] Create `src/lib/api/tenant.ts`: `getCurrentTenantApi`, `updateTenantApi`
+- [x] Create `src/lib/api/permissions.ts`: `getMyPermissionsApi`
+- [x] **Validation:** All functions are properly typed; `pnpm tsc --noEmit` passes
 
 ### 4.6 Query Key Factory
-- [ ] Implement `src/lib/query/keys.ts` with hierarchical namespacing:
+- [x] Implement `src/lib/query/keys.ts` with hierarchical namespacing:
   ```ts
   export const keys = {
     auth: { me: ['auth', 'me'] as const, sessions: ['auth', 'sessions'] as const },
@@ -172,23 +172,23 @@ across engineers. Each task includes a concrete validation criterion.
     // Modules add their namespaces here as their proposals are implemented
   }
   ```
-- [ ] **Validation:** Key factory is fully typed (no `string[]` widening); TypeScript strict mode passes
+- [x] **Validation:** Key factory is fully typed (no `string[]` widening); TypeScript strict mode passes
 
 ### 4.7 Client Logger
-- [ ] Create `src/lib/logger.ts` with `createLogger(module: string)` factory:
+- [x] Create `src/lib/logger.ts` with `createLogger(module: string)` factory:
   - Levels: `debug`, `info`, `warn`, `error`
   - Production: only `warn` and `error` output
   - Development: all levels, formatted with module tag and timestamp
   - Each log includes `X-Request-ID` of the in-flight request (from AsyncLocalStorage equivalent via React context)
-- [ ] **Validation:** In dev mode, API requests log with module tag; in production build, debug/info logs are stripped
+- [x] **Validation:** In dev mode, API requests log with module tag; in production build, debug/info logs are stripped
 
 ### 4.8 API Client Unit Tests
-- [ ] Test CSRF token injection (mock `__Host-csrf` cookie)
-- [ ] Test 401 → refresh → retry flow (mock backend with msw)
-- [ ] Test retry logic with 503 (3 attempts, correct backoff timings)
-- [ ] Test circuit breaker state transitions (closed → open → half-open → closed)
-- [ ] Test `ApiError` construction from 422, 500, network error
-- [ ] **Target:** 90%+ coverage for `src/lib/api/`
+- [x] Test CSRF token injection (mock `__Host-csrf` cookie)
+- [x] Test 401 → refresh → retry flow (mock backend with msw)
+- [x] Test retry logic with 503 (3 attempts, correct backoff timings)
+- [x] Test circuit breaker state transitions (closed → open → half-open → closed)
+- [x] Test `ApiError` construction from 422, 500, network error
+- [x] **Target:** 90%+ coverage for `src/lib/api/`
 
 ---
 
