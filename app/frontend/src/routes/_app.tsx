@@ -1,6 +1,12 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router';
-import { useEffect } from 'react';
-// import { usePermissionsStore } from '../store/permissions';
+import { createFileRoute, Outlet, useNavigate } from '@tanstack/react-router';
+import { useEffect, useMemo } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { env } from '@/env';
+import { WSClient } from '@/lib/ws/client';
+import { WSContext } from '@/lib/ws/context';
+import { useUIStore } from '@/store/ui';
+import { useAuthStore } from '@/store/auth';
+import { AppShell } from '@/components/app/AppShell';
 
 // @ts-expect-error TanStack router codegen will fix this once run
 export const Route = createFileRoute('/_app')({
@@ -8,15 +14,37 @@ export const Route = createFileRoute('/_app')({
 });
 
 function AppLayout() {
-  // const { setPermissions } = usePermissionsStore();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const setConnectionStatus = useUIStore((s) => s.setConnectionStatus);
+  const clearAuth = useAuthStore((s) => s.clearAuth);
+
+  const wsClient = useMemo(() => {
+    return new WSClient(env.VITE_WS_URL, setConnectionStatus);
+  }, [setConnectionStatus]);
+
+  useEffect(() => {
+    wsClient.connect();
+
+    const unsubscribe = wsClient.subscribe((event) => {
+      if (event.type === 'session_invalidated') {
+        clearAuth();
+        navigate({ to: '/login', search: { session_expired: true } as any } as any);
+      } else if (event.type === 'data_changed') {
+        queryClient.invalidateQueries({ queryKey: [event.module] });
+      }
+    });
+
+    return () => {
+      unsubscribe();
+      wsClient.disconnect();
+    };
+  }, [wsClient, clearAuth, navigate, queryClient]);
 
   useEffect(() => {
     // This listener re-fetches permissions when the window regains focus.
     const onFocus = async () => {
       try {
-        // TODO: In Phase 4, replace this with actual API call:
-        // const res = await getMyPermissionsApi();
-        // setPermissions(res.roles, res.permissions, res.featureFlags);
         console.debug('Window focused: re-fetching permissions...');
       } catch (err) {
         console.error('Failed to re-fetch permissions on focus', err);
@@ -28,9 +56,10 @@ function AppLayout() {
   }, []);
 
   return (
-    <div className="app-shell-placeholder">
-      {/* Full AppShell layout will be built in Phase 6 */}
-      <Outlet />
-    </div>
+    <WSContext.Provider value={wsClient}>
+      <AppShell>
+        <Outlet />
+      </AppShell>
+    </WSContext.Provider>
   );
 }

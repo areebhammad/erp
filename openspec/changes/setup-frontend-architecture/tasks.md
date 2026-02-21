@@ -195,32 +195,32 @@ across engineers. Each task includes a concrete validation criterion.
 ## Phase 5: WebSocket Client (Week 2)
 
 ### 5.1 Managed WebSocket
-- [ ] Implement `src/lib/ws/client.ts` as a class `WSClient`:
+- [x] Implement `src/lib/ws/client.ts` as a class `WSClient`:
   - Constructor: `url`, `onMessage` callback, `onStatusChange` callback
   - `connect()`: creates WebSocket, listens to `onopen`, `onmessage`, `onclose`, `onerror`
   - `disconnect()`: graceful close
   - Reconnection: exponential backoff from 1 s to 30 s with ±500 ms jitter
   - On `onopen`: `onStatusChange('connected')` → calls `useUIStore.setConnectionStatus('connected')`
   - On `onclose/onerror`: `onStatusChange('disconnected')` → schedules reconnect attempt
-- [ ] Implement `src/lib/ws/events.ts` as a typed discriminated union of all event types
-- [ ] Implement `src/lib/ws/useWebSocket.ts` React hook that wraps `WSClient` and returns event subscription API
+- [x] Implement `src/lib/ws/events.ts` as a typed discriminated union of all event types
+- [x] Implement `src/lib/ws/useWebSocket.ts` React hook that wraps `WSClient` and returns event subscription API
 
 ### 5.2 WebSocket Context
-- [ ] Create `WSContext` in `src/lib/ws/context.ts` that holds the singleton `WSClient`
-- [ ] Mount the `WSClient` in `_app.tsx` (on layout mount) and expose via `WSContext.Provider`
-- [ ] On `session_invalidated` event → call `clearAuth()` and redirect
-- [ ] On `data_changed` event → call `queryClient.invalidateQueries` with the correct module keys
+- [x] Create `WSContext` in `src/lib/ws/context.ts` that holds the singleton `WSClient`
+- [x] Mount the `WSClient` in `_app.tsx` (on layout mount) and expose via `WSContext.Provider`
+- [x] On `session_invalidated` event → call `clearAuth()` and redirect
+- [x] On `data_changed` event → call `queryClient.invalidateQueries` with the correct module keys
 
 ### 5.3 Connection Status Indicator
-- [ ] Add a connection status dot to `TopBar.tsx` using `useUIStore.connectionStatus`
-- [ ] Green = connected; Amber = connecting/reconnecting; Red = disconnected for > 30 s
-- [ ] Show the "Unable to reach server" banner (from AppShell) when `disconnected` for > 30 s
+- [x] Add a connection status dot to `TopBar.tsx` using `useUIStore.connectionStatus`
+- [x] Green = connected; Amber = connecting/reconnecting; Red = disconnected for > 30 s
+- [x] Show the "Unable to reach server" banner (from AppShell) when `disconnected` for > 30 s
 
 ### 5.4 WebSocket Unit Tests
-- [ ] Test reconnection backoff timing (mock WebSocket close events)
-- [ ] Test `session_invalidated` triggers `clearAuth` and redirect
-- [ ] Test `data_changed` triggers `queryClient.invalidateQueries`
-- [ ] **Target:** 90%+ coverage for `src/lib/ws/`
+- [x] Test reconnection backoff timing (mock WebSocket close events)
+- [x] Test `session_invalidated` triggers `clearAuth` and redirect
+- [x] Test `data_changed` triggers `queryClient.invalidateQueries`
+- [x] **Target:** 90%+ coverage for `src/lib/ws/`
 
 ---
 
