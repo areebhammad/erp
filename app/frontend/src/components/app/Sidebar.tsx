@@ -2,7 +2,8 @@ import {
   Briefcase01Icon,
   DeliveryBox01Icon,
   Home01Icon,
-  Menu01Icon,
+  // Menu01Icon,
+  Menu03Icon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Link } from '@tanstack/react-router';
@@ -23,20 +24,19 @@ export function Sidebar() {
 
   return (
     <aside
-      className={`flex flex-col border-r bg-background transition-all duration-300 ${
-        sidebarCollapsed ? 'w-16' : 'w-64'
-      }`}
+      className={`flex flex-col border-r bg-background transition-all duration-300 ${sidebarCollapsed ? 'w-16' : 'w-64'
+        }`}
     >
       <div
         className={`flex h-14 items-center border-b px-4 ${sidebarCollapsed ? 'justify-center' : 'justify-between'}`}
       >
-        {!sidebarCollapsed && <span className="font-semibold">ERP</span>}
+        {!sidebarCollapsed && <span className="font-semibold">Marchly</span>}
         <button
           onClick={toggleSidebar}
           className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-muted"
           aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
-          <HugeiconsIcon icon={Menu01Icon} size={20} />
+          <HugeiconsIcon icon={Menu03Icon} size={20} />
         </button>
       </div>
       <nav className="flex-1 overflow-y-auto py-4">
