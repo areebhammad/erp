@@ -1,6 +1,11 @@
 import { TanStackDevtools } from '@tanstack/react-devtools';
 import { QueryClient } from '@tanstack/react-query';
-import { createRootRouteWithContext, HeadContent, Scripts } from '@tanstack/react-router';
+import {
+  createRootRouteWithContext,
+  HeadContent,
+  Link,
+  Scripts,
+} from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { initColorModeScript } from '../lib/color-mode';
 
@@ -55,6 +60,22 @@ export const Route = createRootRouteWithContext<{
   }),
 
   shellComponent: RootDocument,
+  notFoundComponent: () => {
+    return (
+      <div className="flex h-screen items-center justify-center flex-col text-center p-4">
+        <h1 className="text-6xl font-black mb-4">404</h1>
+        <p className="text-xl text-muted-foreground mb-6">
+          Oops! We couldn't find the page you're requesting.
+        </p>
+        <Link
+          to="/"
+          className="text-primary text-sm font-semibold hover:underline bg-primary/10 px-4 py-2 rounded-md"
+        >
+          Return Home
+        </Link>
+      </div>
+    );
+  },
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {

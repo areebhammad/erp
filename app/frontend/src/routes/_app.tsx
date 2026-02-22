@@ -1,12 +1,12 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, Outlet, useNavigate } from '@tanstack/react-router';
 import { useEffect, useMemo } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { AppShell } from '@/components/app/AppShell';
 import { env } from '@/env';
 import { WSClient } from '@/lib/ws/client';
 import { WSContext } from '@/lib/ws/context';
-import { useUIStore } from '@/store/ui';
 import { useAuthStore } from '@/store/auth';
-import { AppShell } from '@/components/app/AppShell';
+import { useUIStore } from '@/store/ui';
 
 export const Route = createFileRoute('/_app')({
   component: AppLayout,
@@ -28,7 +28,10 @@ function AppLayout() {
     const unsubscribe = wsClient.subscribe((event) => {
       if (event.type === 'session_invalidated') {
         clearAuth();
-        navigate({ to: '/login', search: { session_expired: true } as any } as any);
+        navigate({
+          to: '/login',
+          search: { session_expired: true } as any,
+        } as any);
       } else if (event.type === 'data_changed') {
         queryClient.invalidateQueries({ queryKey: [event.module] });
       }

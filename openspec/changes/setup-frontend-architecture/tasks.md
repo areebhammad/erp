@@ -227,11 +227,11 @@ across engineers. Each task includes a concrete validation criterion.
 ## Phase 6: App Shell & Design Components (Week 2–3)
 
 ### 6.1 AppShell Layout
-- [ ] Implement `src/components/app/AppShell.tsx`: CSS grid layout (sidebar | [topbar / main])
-- [ ] Wire into `_app.tsx` as the layout wrapper
+- [x] Implement `src/components/app/AppShell.tsx`: CSS grid layout (sidebar | [topbar / main])
+- [x] Wire into `_app.tsx` as the layout wrapper
 
 ### 6.2 Sidebar
-- [ ] Implement `src/components/app/Sidebar.tsx`:
+- [x] Implement `src/components/app/Sidebar.tsx`:
   - Navigation groups from a static `navigation.ts` config (groups, items, required permission)
   - Filter items using `usePermissionsStore.can(resource, 'read')` — absent items not rendered
   - Active link detection via `useMatch` from TanStack Router → `aria-current="page"`
@@ -240,7 +240,7 @@ across engineers. Each task includes a concrete validation criterion.
   - Fully keyboard navigable (Tab / Shift+Tab through links, Escape to collapse focus trap)
 
 ### 6.3 TopBar
-- [ ] Implement `src/components/app/TopBar.tsx`:
+- [x] Implement `src/components/app/TopBar.tsx`:
   - Tenant logo with company-name fallback avatar (deterministic colour from `tenant.id`)
   - Breadcrumbs component (see below)
   - Connection status dot (from `useUIStore.connectionStatus`)
@@ -249,42 +249,42 @@ across engineers. Each task includes a concrete validation criterion.
   - User avatar dropdown: "Profile", "Settings", "Theme", "Language", "Logout"
 
 ### 6.4 Breadcrumbs
-- [ ] Implement `src/components/app/Breadcrumbs.tsx` using `useMatches` from TanStack Router
-- [ ] Each match contributes a `breadcrumb` property (defined in route's `meta` object)
-- [ ] Last breadcrumb is non-linked (current page); all others are `<Link>`
-- [ ] `aria-label="breadcrumb"` on `<nav>`, `aria-current="page"` on last item
+- [x] Implement `src/components/app/Breadcrumbs.tsx` using `useMatches` from TanStack Router
+- [x] Each match contributes a `breadcrumb` property (defined in route's `meta` object)
+- [x] Last breadcrumb is non-linked (current page); all others are `<Link>`
+- [x] `aria-label="breadcrumb"` on `<nav>`, `aria-current="page"` on last item
 
 ### 6.5 Command Palette
-- [ ] Implement `src/components/app/CommandPalette.tsx` using Radix Dialog + CMDK
-- [ ] Navigation commands: all routes the user has access to (filtered by permissions store)
-- [ ] Recent pages: last 10 visited (stored in `useUIStore`, session only)
-- [ ] Search: debounced 300 ms → `GET /api/v1/search?q=<query>`, results show module + icon
-- [ ] Keyboard: Arrow up/down, Enter to navigate, Escape to close
-- [ ] Accessible: results count announced via `aria-live="polite"`
+- [x] Implement `src/components/app/CommandPalette.tsx` using Radix Dialog + CMDK
+- [x] Navigation commands: all routes the user has access to (filtered by permissions store)
+- [x] Recent pages: last 10 visited (stored in `useUIStore`, session only)
+- [x] Search: debounced 300 ms → `GET /api/v1/search?q=<query>`, results show module + icon
+- [x] Keyboard: Arrow up/down, Enter to navigate, Escape to close
+- [x] Accessible: results count announced via `aria-live="polite"`
 
 ### 6.6 Notification Drawer
-- [ ] Implement `src/components/app/NotificationDrawer.tsx` using Radix Dialog/Sheet
-- [ ] Lists `useUIStore.notifications` sorted by timestamp desc
-- [ ] "Mark all as read" button → `useUIStore.markAllNotificationsRead()`
-- [ ] Each notification: icon (by type), title, body, relative timestamp (`timeago`), optional deep link
+- [x] Implement `src/components/app/NotificationDrawer.tsx` using Radix Dialog/Sheet
+- [x] Lists `useUIStore.notifications` sorted by timestamp desc
+- [x] "Mark all as read" button → `useUIStore.markAllNotificationsRead()`
+- [x] Each notification: icon (by type), title, body, relative timestamp (`timeago`), optional deep link
 
 ### 6.7 ERP Primitive Components
-- [ ] Implement `src/components/app/PageHeader.tsx` with title, breadcrumbs, subtitle slot, actions slot
-- [ ] Implement `src/components/app/StatCard.tsx` with value, label, trend (+ sparkline using Recharts)
-- [ ] Implement `src/components/app/DataTable.tsx` wrapping TanStack Table:
+- [x] Implement `src/components/app/PageHeader.tsx` with title, breadcrumbs, subtitle slot, actions slot
+- [x] Implement `src/components/app/StatCard.tsx` with value, label, trend (+ sparkline using Recharts)
+- [x] Implement `src/components/app/DataTable.tsx` wrapping TanStack Table:
   - Props: `columns`, `queryKey`, `fetchFn` (returns `PaginatedResponse<T>`)
   - Server-side pagination (cursor-based), sorting, filtering
   - Column visibility, width persistence (localStorage keyed by `tableId`)
   - Row selection, bulk actions slot
   - Virtual scrolling via `@tanstack/react-virtual` for > 200 rows
   - Full ARIA table semantics; keyboard row navigation
-- [ ] Implement `src/components/app/EmptyState.tsx` with SVG illustration, title, body, CTA button
-- [ ] Implement `src/components/app/Money.tsx` with `Intl.NumberFormat` using `useTenantStore` locale and currency
+- [x] Implement `src/components/app/EmptyState.tsx` with SVG illustration, title, body, CTA button
+- [x] Implement `src/components/app/Money.tsx` with `Intl.NumberFormat` using `useTenantStore` locale and currency
 
 ### 6.8 Accessibility Audit Tooling
-- [ ] Install `@axe-core/react` and add to Vitest `setupFiles` (reports violations in development)
-- [ ] Install `axe-core` CLI in CI to run against the design showcase route build
-- [ ] Require 0 WCAG 2.1 AA violations in CI — any violation fails the build
+- [x] Install `@axe-core/react` and add to Vitest `setupFiles` (reports violations in development)
+- [x] Install `axe-core` CLI in CI to run against the design showcase route build
+- [x] Require 0 WCAG 2.1 AA violations in CI — any violation fails the build
 
 ---
 

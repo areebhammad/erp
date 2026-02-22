@@ -82,7 +82,10 @@ client.interceptors.response.use(
         originalConfig._isRetryFor401 = true;
         try {
           // Attempt silent refresh
-          await axios.get('/api/v1/auth/refresh', { baseURL: env.VITE_API_URL, withCredentials: true });
+          await axios.get('/api/v1/auth/refresh', {
+            baseURL: env.VITE_API_URL,
+            withCredentials: true,
+          });
           return client(originalConfig);
         } catch (refreshError) {
           useAuthStore.getState().clearAuth();

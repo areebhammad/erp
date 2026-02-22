@@ -29,7 +29,7 @@ export class ApiError extends Error {
       if (typeof window !== 'undefined') {
         try {
           Sentry.captureException(this, { tags: { request_id: requestId } });
-        } catch (e) {
+        } catch (_e) {
           // Ignore if Sentry fails or isn't fully initialized
         }
       }

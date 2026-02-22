@@ -61,7 +61,7 @@ export class CircuitBreaker {
         } else {
           this.state = 'OPEN';
         }
-      } catch (err) {
+      } catch (_err) {
         this.state = 'OPEN';
       }
     }, 30000);

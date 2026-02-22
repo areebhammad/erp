@@ -1,5 +1,5 @@
-import type { WSEvent } from './events';
 import type { ConnectionStatus } from '@/store/ui';
+import type { WSEvent } from './events';
 
 export class WSClient {
   private url: string;
@@ -13,10 +13,7 @@ export class WSClient {
   private isIntentionalDisconnect = false;
   private listeners: Set<(event: WSEvent) => void> = new Set();
 
-  constructor(
-    url: string,
-    onStatusChange: (status: ConnectionStatus) => void
-  ) {
+  constructor(url: string, onStatusChange: (status: ConnectionStatus) => void) {
     this.url = url;
     this.onStatusChange = onStatusChange;
   }
@@ -47,7 +44,9 @@ export class WSClient {
     this.ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data) as WSEvent;
-        this.listeners.forEach(listener => listener(data));
+        this.listeners.forEach((listener) => {
+          listener(data);
+        });
       } catch (e) {
         console.error('Failed to parse websocket message', e);
       }
@@ -81,10 +80,11 @@ export class WSClient {
   }
 
   private scheduleReconnect() {
-    if (this.reconnectIntervalId !== null || this.isIntentionalDisconnect) return;
+    if (this.reconnectIntervalId !== null || this.isIntentionalDisconnect)
+      return;
 
     let delay = Math.min(
-      this.initialReconnectTime * Math.pow(2, this.attempt),
+      this.initialReconnectTime * 2 ** this.attempt,
       this.maxReconnectTime
     );
     // ±500 ms jitter

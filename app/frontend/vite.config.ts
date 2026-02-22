@@ -9,6 +9,7 @@ import viteTsConfigPaths from 'vite-tsconfig-paths';
 const config = defineConfig({
   plugins: [
     devtools(),
+    tanstackStart(),
     nitro({
       handlers: [
         {
@@ -28,7 +29,6 @@ const config = defineConfig({
       projects: ['./tsconfig.json'],
     }),
     tailwindcss(),
-    tanstackStart(),
     viteReact(),
   ],
   build: {
