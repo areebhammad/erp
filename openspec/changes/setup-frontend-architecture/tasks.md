@@ -374,22 +374,22 @@ across engineers. Each task includes a concrete validation criterion.
 
 ### 9.3 Core Web Vitals Monitoring
 - [x] Install `web-vitals` package; report LCP, CLS, INP, FID, TTFB to PostHog on page load
-- [ ] CI check: `pnpm build && pnpm dlx @unlighthouse/cli --site http://localhost:3000 --budget '{"performance": 90}'`
-- [ ] **Validation:** Lighthouse performance score ≥ 90 in CI; LCP < 2.5 s, CLS < 0.1, INP < 200 ms
+- [x] CI check: `pnpm build && pnpm dlx @unlighthouse/cli --site http://localhost:3000 --budget '{"performance": 90}'`
+- [x] **Validation:** Lighthouse performance score ≥ 90 in CI; LCP < 2.5 s, CLS < 0.1, INP < 200 ms
 
 ---
 
 ## Phase 10: Tests & Quality Sign-Off (Week 4)
 
 ### 10.1 Component Showcase Route
-- [ ] Implement `src/routes/_dev/design.tsx` with full component catalogue:
+- [x] Implement `src/routes/_dev/design.tsx` with full component catalogue:
   - All colour tokens with hex and contrast ratios
   - Typography scale
   - All shadcn/ui primitives in ERP theme
   - All custom ERP components in all states (loading, empty, error, populated, dark)
   - Interactive theme toggle (light/dark side-by-side comparison)
-- [ ] Guard with `import.meta.env.DEV` → 404 in production
-- [ ] **Validation:** `axe-core` passes on this route with 0 WCAG 2.1 AA violations
+- [x] Guard with `import.meta.env.DEV` → 404 in production
+- [x] **Validation:** `axe-core` passes on this route with 0 WCAG 2.1 AA violations
 
 ### 10.2 Integration Test Suite
 - [ ] Auth flow: stub backend with MSW → register → login (single-factor) → token refresh → logout

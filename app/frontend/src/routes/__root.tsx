@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react';
 import { TanStackDevtools } from '@tanstack/react-devtools';
 import { QueryClient } from '@tanstack/react-query';
 import {
@@ -7,14 +8,11 @@ import {
   Scripts,
 } from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
-import * as Sentry from '@sentry/react';
 import posthog from 'posthog-js';
+import { type Metric, onCLS, onFCP, onINP, onLCP, onTTFB } from 'web-vitals';
 import { env } from '../env';
 import { initColorModeScript } from '../lib/color-mode';
-
 import appCss from '../styles.css?url';
-
-import { onCLS, onFCP, onLCP, onINP, onTTFB, type Metric } from 'web-vitals';
 
 if (typeof window !== 'undefined') {
   Sentry.init({
@@ -29,11 +27,21 @@ if (typeof window !== 'undefined') {
   });
 
   try {
-    onCLS((m: Metric) => posthog.capture('web_vitals', { metric: 'CLS', ...m }));
-    onFCP((m: Metric) => posthog.capture('web_vitals', { metric: 'FCP', ...m }));
-    onLCP((m: Metric) => posthog.capture('web_vitals', { metric: 'LCP', ...m }));
-    onINP((m: Metric) => posthog.capture('web_vitals', { metric: 'INP', ...m }));
-    onTTFB((m: Metric) => posthog.capture('web_vitals', { metric: 'TTFB', ...m }));
+    onCLS((m: Metric) =>
+      posthog.capture('web_vitals', { metric: 'CLS', ...m })
+    );
+    onFCP((m: Metric) =>
+      posthog.capture('web_vitals', { metric: 'FCP', ...m })
+    );
+    onLCP((m: Metric) =>
+      posthog.capture('web_vitals', { metric: 'LCP', ...m })
+    );
+    onINP((m: Metric) =>
+      posthog.capture('web_vitals', { metric: 'INP', ...m })
+    );
+    onTTFB((m: Metric) =>
+      posthog.capture('web_vitals', { metric: 'TTFB', ...m })
+    );
   } catch (e) {
     console.error('Core web vitals unsupported', e);
   }

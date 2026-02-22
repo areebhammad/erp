@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-// @ts-ignore
+// @ts-expect-error
 import { setLocale as setParaglideLocale } from '@/paraglide/runtime';
 
 export type ColorMode = 'light' | 'dark' | 'system';
