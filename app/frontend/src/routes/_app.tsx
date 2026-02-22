@@ -8,7 +8,6 @@ import { useUIStore } from '@/store/ui';
 import { useAuthStore } from '@/store/auth';
 import { AppShell } from '@/components/app/AppShell';
 
-// @ts-expect-error TanStack router codegen will fix this once run
 export const Route = createFileRoute('/_app')({
   component: AppLayout,
 });
