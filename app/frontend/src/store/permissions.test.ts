@@ -25,6 +25,13 @@ describe('Permissions Store', () => {
       true
     );
 
+    usePermissionsStore
+      .getState()
+      .setPermissions(['admin'], new Set(['*:*']), {});
+    expect(usePermissionsStore.getState().can('anything', 'any_action')).toBe(
+      true
+    );
+
     usePermissionsStore.getState().setPermissions(['user'], ['users:*'], {});
     expect(usePermissionsStore.getState().can('users', 'create')).toBe(true);
     expect(usePermissionsStore.getState().can('posts', 'read')).toBe(false);

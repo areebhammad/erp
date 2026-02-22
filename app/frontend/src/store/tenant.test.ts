@@ -28,4 +28,19 @@ describe('Tenant Store', () => {
     useTenantStore.getState().clearTenant();
     expect(useTenantStore.getState().tenant).toBeNull();
   });
+
+  it('sets tenant without gstin safely', () => {
+    const tenant = {
+      id: 'tenant-2',
+      name: 'No GSTIN Corp',
+      subscriptionPlan: 'Basic',
+      currency_code: 'USD',
+      locale: 'en-US',
+      fiscal_year_start: '01-01',
+      // gstin is intentionally omitted
+    };
+
+    useTenantStore.getState().setTenant(tenant);
+    expect(useTenantStore.getState().gstin).toBeNull();
+  });
 });

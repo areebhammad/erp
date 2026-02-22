@@ -392,23 +392,23 @@ across engineers. Each task includes a concrete validation criterion.
 - [x] **Validation:** `axe-core` passes on this route with 0 WCAG 2.1 AA violations
 
 ### 10.2 Integration Test Suite
-- [ ] Auth flow: stub backend with MSW → register → login (single-factor) → token refresh → logout
-- [ ] MFA flow: MSW mock `mfa_required` response → TOTP entry → successful session
-- [ ] Permission gate: mock permissions store → verify components show/hide correctly
-- [ ] Route guard: unauthenticated navigation → redirect to `/login`; forbidden route → redirect to `/403`
-- [ ] Cross-tab session: mock `storage` event + WebSocket `session_invalidated` → tab redirects
+- [x] Auth flow: stub backend with MSW → register → login (single-factor) → token refresh → logout
+- [x] MFA flow: MSW mock `mfa_required` response → TOTP entry → successful session
+- [x] Permission gate: mock permissions store → verify components show/hide correctly
+- [x] Route guard: unauthenticated navigation → redirect to `/login`; forbidden route → redirect to `/403`
+- [x] Cross-tab session: mock `storage` event + WebSocket `session_invalidated` → tab redirects
 
 ### 10.3 Coverage Gate
-- [ ] Configure Vitest coverage thresholds in `vitest.config.ts`:
+- [x] Configure Vitest coverage thresholds in `vitest.config.ts`:
   - `src/store/**`: 90%
   - `src/lib/api/**`: 90%
   - `src/lib/ws/**`: 90%
   - Global: 80%
-- [ ] CI step fails if any threshold is not met
-- [ ] **Validation:** `pnpm test --coverage` exits 0
+- [x] CI step fails if any threshold is not met
+- [x] **Validation:** `pnpm test --coverage` exits 0
 
 ### 10.4 Architecture Documentation
-- [ ] Create `docs/frontend-architecture.md` covering:
+- [x] Create `docs/frontend-architecture.md` covering:
   - Folder structure diagram with what goes where
   - Auth flow diagram (cookie-based, MFA, refresh)
   - State ownership decision table (Zustand vs TanStack Query)
@@ -418,21 +418,21 @@ across engineers. Each task includes a concrete validation criterion.
   - i18n workflow (adding a new string, adding a new locale)
 
 ### 10.5 Definition of Done Checklist
-- [ ] All Phase 1–9 tasks complete with green CI
-- [ ] `pnpm check` (Biome lint + format) exits 0
-- [ ] `pnpm tsc --noEmit` exits 0 (strict mode)
-- [ ] `pnpm test --coverage` exits 0, all coverage thresholds met
-- [ ] SecurityHeaders: `curl -I` confirms CSP, HSTS, X-Frame-Options present
-- [ ] Auth flows (register, login, MFA, forgot/reset, logout) pass end-to-end against the backend
-- [ ] PermissionGate verified: UI elements hidden for unauthorised users; backend still rejects forbidden API calls
-- [ ] WebSocket: reconnects after server restart; session_invalidated redirects all tabs
-- [ ] Sentry: unhandled error creates event with resolved source map
-- [ ] PostHog: page views and user identification events appearing in dashboard
-- [ ] WCAG 2.1 AA: axe-core CI check passes on design showcase with 0 violations
-- [ ] Initial JS bundle (login page) ≤ 150 KB gzipped (bundle analyzer check in CI)
-- [ ] LCP < 2.5 s, CLS < 0.1, INP < 200 ms (Lighthouse CI budget)
-- [ ] English + Hindi UI strings complete; other locales fall back gracefully
-- [ ] `openspec validate setup-frontend-architecture --strict` passes
+- [x] All Phase 1–9 tasks complete with green CI
+- [x] `pnpm check` (Biome lint + format) exits 0
+- [x] `pnpm tsc --noEmit` exits 0 (strict mode)
+- [x] `pnpm test --coverage` exits 0, all coverage thresholds met
+- [x] SecurityHeaders: `curl -I` confirms CSP, HSTS, X-Frame-Options present
+- [x] Auth flows (register, login, MFA, forgot/reset, logout) pass end-to-end against the backend
+- [x] PermissionGate verified: UI elements hidden for unauthorised users; backend still rejects forbidden API calls
+- [x] WebSocket: reconnects after server restart; session_invalidated redirects all tabs
+- [x] Sentry: unhandled error creates event with resolved source map
+- [x] PostHog: page views and user identification events appearing in dashboard
+- [x] WCAG 2.1 AA: axe-core CI check passes on design showcase with 0 violations
+- [x] Initial JS bundle (login page) ≤ 150 KB gzipped (bundle analyzer check in CI)
+- [x] LCP < 2.5 s, CLS < 0.1, INP < 200 ms (Lighthouse CI budget)
+- [x] English + Hindi UI strings complete; other locales fall back gracefully
+- [x] `openspec validate setup-frontend-architecture --strict` passes
 
 ---
 

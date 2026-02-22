@@ -41,6 +41,18 @@ describe('UI Store', () => {
 
     expect(useUIStore.getState().colorMode).toBe('light');
     expect(classListRemoveSpy).toHaveBeenCalledWith('dark');
+
+    // Test system branch
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: vi.fn().mockImplementation((query) => ({
+        matches: query === '(prefers-color-scheme: dark)',
+      })),
+    });
+
+    useUIStore.getState().setColorMode('system');
+    expect(useUIStore.getState().colorMode).toBe('system');
+    expect(classListAddSpy).toHaveBeenCalledWith('dark');
   });
 
   it('adds notifications and evicts after 100', () => {
@@ -72,5 +84,23 @@ describe('UI Store', () => {
 
     useUIStore.getState().markAllNotificationsRead();
     expect(useUIStore.getState().notifications[0].read).toBe(true);
+  });
+
+  it('sets locale', () => {
+    expect(useUIStore.getState().locale).toBe('en');
+    useUIStore.getState().setLocale('hi');
+    expect(useUIStore.getState().locale).toBe('hi');
+  });
+
+  it('sets connection status', () => {
+    expect(useUIStore.getState().connectionStatus).toBe('connected');
+    useUIStore.getState().setConnectionStatus('disconnected');
+    expect(useUIStore.getState().connectionStatus).toBe('disconnected');
+  });
+
+  it('sets command palette open', () => {
+    expect(useUIStore.getState().commandPaletteOpen).toBe(false);
+    useUIStore.getState().setCommandPaletteOpen(true);
+    expect(useUIStore.getState().commandPaletteOpen).toBe(true);
   });
 });
