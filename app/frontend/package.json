@@ -9,7 +9,8 @@
     "test": "vitest run",
     "lint": "biome lint .",
     "format": "biome format --write .",
-    "check": "biome check --write ."
+    "check": "biome check --write .",
+    "paraglide": "paraglide-js compile --project ./project.inlang"
   },
   "dependencies": {
     "@base-ui/react": "^1.2.0",
@@ -36,6 +37,7 @@
     "cmdk": "^1.1.1",
     "h3": "2.0.1-rc.14",
     "nitro": "latest",
+    "posthog-js": "^1.352.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "shadcn": "^3.8.5",
@@ -49,6 +51,8 @@
   "devDependencies": {
     "@axe-core/react": "^4.11.1",
     "@biomejs/biome": "^2.4.4",
+    "@inlang/paraglide-js": "^2.12.0",
+    "@inlang/paraglide-vite": "^1.4.0",
     "@tanstack/devtools-vite": "^0.3.11",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.2.0",

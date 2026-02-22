@@ -7,9 +7,37 @@ import {
   Scripts,
 } from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
+import * as Sentry from '@sentry/react';
+import posthog from 'posthog-js';
+import { env } from '../env';
 import { initColorModeScript } from '../lib/color-mode';
 
 import appCss from '../styles.css?url';
+
+import { onCLS, onFCP, onLCP, onINP, onTTFB, type Metric } from 'web-vitals';
+
+if (typeof window !== 'undefined') {
+  Sentry.init({
+    dsn: env.VITE_SENTRY_DSN,
+    environment: import.meta.env.MODE,
+    release: import.meta.env.VITE_RELEASE,
+    tracesSampleRate: import.meta.env.MODE === 'production' ? 0.1 : 1.0,
+  });
+
+  posthog.init(env.VITE_POSTHOG_KEY, {
+    api_host: env.VITE_POSTHOG_HOST || 'https://app.posthog.com',
+  });
+
+  try {
+    onCLS((m: Metric) => posthog.capture('web_vitals', { metric: 'CLS', ...m }));
+    onFCP((m: Metric) => posthog.capture('web_vitals', { metric: 'FCP', ...m }));
+    onLCP((m: Metric) => posthog.capture('web_vitals', { metric: 'LCP', ...m }));
+    onINP((m: Metric) => posthog.capture('web_vitals', { metric: 'INP', ...m }));
+    onTTFB((m: Metric) => posthog.capture('web_vitals', { metric: 'TTFB', ...m }));
+  } catch (e) {
+    console.error('Core web vitals unsupported', e);
+  }
+}
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -85,7 +113,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        {children}
+        <Sentry.ErrorBoundary fallback={<div>Application Error</div>}>
+          {children}
+        </Sentry.ErrorBoundary>
         <TanStackDevtools
           config={{
             position: 'bottom-right',

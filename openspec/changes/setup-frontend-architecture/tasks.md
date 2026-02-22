@@ -336,44 +336,44 @@ across engineers. Each task includes a concrete validation criterion.
 ## Phase 8: Internationalisation (Week 3)
 
 ### 8.1 English Message Completion
-- [ ] Audit all JSX in `src/` and extract every hardcoded string to `messages/en.json`
-- [ ] Use namespaced dot-notation keys: `auth.login.title`, `auth.login.email_label`, etc.
-- [ ] **Validation:** Running `pnpm paraglide` generates typed message functions; `grep -r "\"[A-Z]"` finds zero hardcoded UI strings in non-demo components
+- [x] Audit all JSX in `src/` and extract every hardcoded string to `messages/en.json`
+- [x] Use namespaced dot-notation keys: `auth.login.title`, `auth.login.email_label`, etc.
+- [x] **Validation:** Running `pnpm paraglide` generates typed message functions; `grep -r "\"[A-Z]"` finds zero hardcoded UI strings in non-demo components
 
 ### 8.2 Hindi Translation
-- [ ] Translate all keys in `messages/en.json` to `messages/hi.json` (use professional translation, not machine-only)
-- [ ] **Validation:** Switch locale to `hi` in the UI; all labels, buttons, errors, and toasts appear in Hindi
+- [x] Translate all keys in `messages/en.json` to `messages/hi.json` (use professional translation, not machine-only)
+- [x] **Validation:** Switch locale to `hi` in the UI; all labels, buttons, errors, and toasts appear in Hindi
 
 ### 8.3 Locale Switcher
-- [ ] Add "Language" option in user dropdown menu and the `useUIStore.setLocale()` action
-- [ ] Scaffold locale files for `ta`, `te`, `bn`, `mr`, `gu` with English fallback (no missing key warnings)
-- [ ] **Validation:** Switching to Hindi works end-to-end; switching to Tamil falls back gracefully to English
+- [x] Add "Language" option in user dropdown menu and the `useUIStore.setLocale()` action
+- [x] Scaffold locale files for `ta`, `te`, `bn`, `mr`, `gu` with English fallback (no missing key warnings)
+- [x] **Validation:** Switching to Hindi works end-to-end; switching to Tamil falls back gracefully to English
 
 ---
 
 ## Phase 9: Observability (Week 3–4)
 
 ### 9.1 Sentry Integration
-- [ ] Configure Sentry in `__root.tsx` with `Sentry.init()`:
+- [x] Configure Sentry in `__root.tsx` with `Sentry.init()`:
   - DSN from `env.VITE_SENTRY_DSN`
   - `environment`: `'production' | 'staging' | 'development'` (from env)
   - `release`: git SHA (injected by CI via `VITE_RELEASE=<sha>`)
   - Trace sample rate: 10% production, 100% staging, 0% development
   - PII scrubbing: email → UUID in breadcrumbs
   - Source maps: uploaded in CI via `@sentry/vite-plugin`
-- [ ] Wrap `__root.tsx` shell component with `Sentry.ErrorBoundary` (fallback: full-page error UI with request-id)
-- [ ] **Validation:** Trigger an unhandled error in dev → Sentry event appears in dashboard with source map resolved
+- [x] Wrap `__root.tsx` shell component with `Sentry.ErrorBoundary` (fallback: full-page error UI with request-id)
+- [x] **Validation:** Trigger an unhandled error in dev → Sentry event appears in dashboard with source map resolved
 
 ### 9.2 PostHog Integration
-- [ ] Configure PostHog in `__root.tsx` (already in `package.json`)
+- [x] Configure PostHog in `__root.tsx` (already in `package.json`)
   - Identify user after login: `posthog.identify(user.id, { plan: tenant.subscriptionPlan })`  — no PII beyond UUID
   - Reset on logout: `posthog.reset()`
   - Page-view events: automated via `posthog.capture('$pageview')` in `_app.tsx` navigation handler
   - Feature flags: `posthog.isFeatureEnabled('flag_name')` — sync to `usePermissionsStore.featureFlags`
-- [ ] **Validation:** Login → PostHog People tab shows identified user; navigate between pages → pageview events logged
+- [x] **Validation:** Login → PostHog People tab shows identified user; navigate between pages → pageview events logged
 
 ### 9.3 Core Web Vitals Monitoring
-- [ ] Install `web-vitals` package; report LCP, CLS, INP, FID, TTFB to PostHog on page load
+- [x] Install `web-vitals` package; report LCP, CLS, INP, FID, TTFB to PostHog on page load
 - [ ] CI check: `pnpm build && pnpm dlx @unlighthouse/cli --site http://localhost:3000 --budget '{"performance": 90}'`
 - [ ] **Validation:** Lighthouse performance score ≥ 90 in CI; LCP < 2.5 s, CLS < 0.1, INP < 200 ms
 

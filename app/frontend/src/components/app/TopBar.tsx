@@ -78,6 +78,18 @@ export function TopBar() {
             <DropdownMenuSeparator />
             <DropdownMenuItem>Profile</DropdownMenuItem>
             <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => useUIStore.getState().setLocale('en')}
+            >
+              Language: English
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => useUIStore.getState().setLocale('hi')}
+            >
+              Language: Hindi
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() =>
                 setColorMode(colorMode === 'dark' ? 'light' : 'dark')

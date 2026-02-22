@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
+// @ts-ignore
+import { setLocale as setParaglideLocale } from '@/paraglide/runtime';
 
 export type ColorMode = 'light' | 'dark' | 'system';
 export type ConnectionStatus = 'connected' | 'connecting' | 'disconnected';
@@ -67,6 +69,7 @@ export const useUIStore = create<UIState>()(
       setLocale: (locale) => {
         set({ locale });
         // NOTE: paraglide.setLocale(locale) can be added here once paraglide is imported
+        setParaglideLocale(locale as any);
       },
 
       addNotification: (notification) => {
