@@ -291,41 +291,41 @@ across engineers. Each task includes a concrete validation criterion.
 ## Phase 7: Auth UI (Week 3)
 
 ### 7.1 Login Page
-- [ ] Implement `src/routes/login.tsx` with TanStack Form + Zod schema
+- [x] Implement `src/routes/login.tsx` with TanStack Form + Zod schema
   - Fields: email (type=email), password (type=password with toggle show/hide)
   - Show session-expired banner if `?session_expired=true` in URL
   - Single-factor success → `setUser` + fetch tenant + fetch permissions → navigate to `/dashboard`
   - MFA required → transition to TOTP step (same page, no navigation)
   - TOTP step: 6-digit OTP input (auto-focus, auto-submit on 6 digits entered)
   - Failed login: non-specific error, password cleared, focus on password field
-  - [ ] 5 consecutive failures → show CAPTCHA (hCaptcha)
+  - [x] 5 consecutive failures → show CAPTCHA (hCaptcha)
   - 429/423 → lockout banner with countdown
   - `aria-live="polite"` on error region; all labels explicit; keyboard-only operable
   - `posthog.capture('user_logged_in', { method: 'password' })` on success
 
 ### 7.2 Register Page
-- [ ] Implement `src/routes/register.tsx` with TanStack Form + Zod schema
+- [x] Implement `src/routes/register.tsx` with TanStack Form + Zod schema
   - Fields: company_name, full_name, email, gstin (optional), password, confirm_password
   - Live password strength meter (12+ chars, complexity)
-  - [ ] HIBP common-password bloom filter check
+  - [x] HIBP common-password bloom filter check
   - GST format validation: inline regex before submit
   - Submit → navigate to `/onboarding` on success
   - `posthog.capture('tenant_registered')` on success
 
 ### 7.3 Forgot Password Page
-- [ ] Implement `src/routes/forgot-password.tsx`
+- [x] Implement `src/routes/forgot-password.tsx`
   - Email input; submit → show generic success copy regardless of email existence
   - Submit button disabled for 60 s after submission (countdown displayed)
 
 ### 7.4 Reset Password Page
-- [ ] Implement `src/routes/reset-password.tsx`
+- [x] Implement `src/routes/reset-password.tsx`
   - Read `token` from URL search params
   - New password + confirm password fields with same strength meter as register
   - On 400/410 from backend → display "Link expired" message with link to /forgot-password
   - On success → redirect to `/login` with success toast
 
 ### 7.5 Session Management Page
-- [ ] Implement Session Management section in a Settings route `_app/settings/security.tsx`
+- [x] Implement Session Management section in a Settings route `_app/settings/security.tsx`
   - List active sessions (device, IP geo, last active, "Current" badge)
   - "Revoke" button on each non-current session → confirm dialog → `revokeSessionApi`
   - "Sign out all other devices" → confirm dialog → `revokeAllSessionsApi`
