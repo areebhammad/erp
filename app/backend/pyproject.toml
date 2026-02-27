@@ -46,8 +46,9 @@ dependencies = [
     # AI/ML
     "openai>=1.57.0",
     
-    # Object Storage
-    "minio>=7.2.0",
+    # Object Storage (boto3 works against SeaweedFS S3 endpoint identically to AWS S3)
+    "boto3>=1.35.0",
+    "aiobotocore>=2.15.0",
     
     # Utilities
     "httpx>=0.28.0",
@@ -137,7 +138,9 @@ module = [
     "jose.*",
     "passlib.*",
     "rq.*",
-    "minio.*",
+    "boto3.*",
+    "botocore.*",
+    "aiobotocore.*",
     "qdrant_client.*",
 ]
 ignore_missing_imports = true

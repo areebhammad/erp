@@ -90,8 +90,8 @@ class AuditLog(GlobalBase):
         nullable=True,
     )
 
-    # Additional metadata
-    metadata: Mapped[dict[str, Any] | None] = mapped_column(
+    # Additional metadata (named extra_metadata to avoid SQLAlchemy reserved name)
+    extra_metadata: Mapped[dict[str, Any] | None] = mapped_column(
         JSONB,
         nullable=True,
     )
@@ -114,7 +114,7 @@ class AuditLog(GlobalBase):
         ip_address: str | None = None,
         user_agent: str | None = None,
         request_id: str | None = None,
-        metadata: dict[str, Any] | None = None,
+        extra_metadata: dict[str, Any] | None = None,
     ) -> "AuditLog":
         """
         Factory method to create an audit log entry.
@@ -130,7 +130,7 @@ class AuditLog(GlobalBase):
             ip_address: IP address of the request
             user_agent: User agent string
             request_id: Request ID for tracing
-            metadata: Additional metadata
+            extra_metadata: Additional metadata
             
         Returns:
             AuditLog instance (not persisted)
@@ -154,5 +154,5 @@ class AuditLog(GlobalBase):
             ip_address=ip_address,
             user_agent=user_agent,
             request_id=request_id,
-            metadata=metadata,
+            extra_metadata=extra_metadata,
         )

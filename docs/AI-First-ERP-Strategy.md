@@ -27,6 +27,7 @@ This document outlines the strategic approach for building an AI-first ERP solut
 5. [Product Architecture](#5-product-architecture)
 6. [Technology Stack](#6-technology-stack)
 7. [AI-First Capabilities](#7-ai-first-capabilities)
+   - [7.9 Programmatic AI Workflow Builder](#79-programmatic-ai-workflow-builder-the-remotion-paradigm)
 8. [India Market Strategy](#8-india-market-strategy)
 9. [3-Year Roadmap](#9-3-year-roadmap)
 10. [Go-to-Market Strategy](#10-go-to-market-strategy)
@@ -545,10 +546,13 @@ Build AI as separate, composable services:
 
 Allow:
 
-1. **Visual Workflow Builder**
-   - Drag-and-drop workflow design
-   - No-code automation
-   - Visual approval chains
+1. **Programmatic AI Workflow Builder** *(Core Differentiator — see Section 7.9)*
+   - **Code is the workflow** — workflows are TypeScript/Python definitions, not database configs
+   - AI writes the workflow code from a plain-English description
+   - Live hot-reload inside the ERP (`workflow dev` — like Remotion for video)
+   - Workflows are version-controlled in Git — companies own their business logic
+   - Composable: workflows can import/extend other workflows like React components
+   - Human reviews AI-generated code before deploying to production
 
 2. **Custom Schema Builder**
    - Dynamic field creation
@@ -562,7 +566,8 @@ Allow:
 
 4. **Business Rule DSL** (Domain Specific Language)
    - Define business logic in plain language
-   - AI translates to executable code
+   - AI translates to executable, reviewable code
+   - Output is readable TypeScript — never a black box
 
 5. **Plugin SDK**
    - Developer toolkit for extensions
@@ -575,7 +580,7 @@ Allow:
    - Revenue sharing model
 
 **Think:**
-> Stripe API flexibility + Notion customization + SAP depth
+> Stripe API flexibility + Notion customization + SAP depth + **Remotion developer experience**
 
 ---
 
@@ -740,7 +745,7 @@ Allow:
 
 #### File Storage
 
-**Object Storage:** MinIO (S3-compatible)
+**Object Storage:** SeaweedFS (S3-compatible, Apache 2.0 licensed)
 - Self-hosted option
 - Document storage
 - Image/file uploads
@@ -850,14 +855,16 @@ User types:
 ```
 
 **AI automatically:**
-1. Builds workflow graph
-2. Adds conditional rule
-3. Creates approval task
-4. Sets up notifications
-5. Simulates test case
-6. Shows visual diagram
+1. Generates workflow as **readable, version-controlled code** (not a database config)
+2. Adds conditional rules and approval chain
+3. Creates notification triggers
+4. Simulates test cases with example data
+5. Presents code to user for review before deployment
+6. Hot-reloads the workflow live inside the running ERP
 
-**No manual configuration screens needed.**
+**No manual configuration screens needed. No consultant needed.**
+
+> ⚡ This is the **Programmatic AI Workflow Builder** paradigm — see Section 7.9 for the full technical design.
 
 ---
 
@@ -974,6 +981,147 @@ User types:
 - Table
 - Insights
 - Actions (reorder, adjust pricing, etc.)
+
+---
+
+### 7.9 AI-Configured Declarative Workflow Engine
+
+> **This is the single most important product innovation in this ERP.**
+> It is what compresses months of ERP customisation into hours.
+
+#### The Core Insight
+
+Every ERP on the market has all the functionality built in — approvals, journal entries,
+inventory updates, GST invoices, notifications. The painful part is **not building those
+features**, it's **configuring how they connect for each specific company**.
+
+SAP solves this with a proprietary graphical workflow builder that requires trained ABAP
+consultants and takes months. ERPNext solves it with a simple state machine that only
+covers basic approval routing and needs developer scripts for anything complex.
+
+**We solve it with AI that generates a human-readable YAML workflow config** — stored
+in our database, scoped to the tenant, executed by our runtime engine against pre-built
+ERP actions. No consultant. No developer. Just plain English → YAML → live workflow.
+
+The "Remotion paradigm" refers to the **authoring experience**: just as Remotion lets
+you define a video as a readable declaration rather than clicking through a timeline
+editor, we let you define a business workflow as a readable YAML declaration rather than
+clicking through configuration screens. The YAML is the source of truth — human-readable,
+reviewable, and editable directly by a tech-savvy admin.
+
+---
+
+#### How It Works
+
+```
+Business owner types plain English
+           ↓  (AI understands context: tenant's modules, roles, chart of accounts)
+   YAML workflow definition generated
+           ↓  (saved to workflow_definitions table, scoped to tenant_id)
+   Runtime engine reads definition, listens for trigger events
+           ↓  (executes pre-built ERP actions in defined sequence)
+   Purchase approved, journal posted, vendor notified — automatically
+```
+
+No code is written. No Git is involved. No deployment pipeline. The YAML is just
+a config record in the database, exactly like how SAP and ERPNext store their workflow
+configurations — but AI-authored and human-readable.
+
+---
+
+#### What a Workflow Looks Like
+
+A business owner says:
+> *"When a purchase order above ₹5 lakh is created, the Finance Head must approve it.
+> If no response in 24 hours, escalate to the CFO. After approval, lock the PO and
+> notify the vendor by WhatsApp."*
+
+AI generates this YAML and saves it to the tenant's `workflow_definitions` row:
+
+```yaml
+workflow:
+  name: purchase_order_high_value_approval
+  trigger:
+    event: purchase_order.created
+    condition: "order.total_amount > 500000"
+
+  steps:
+    - id: request_finance_approval
+      action: erp.approval.request
+      config:
+        role: Finance Head
+        entity: "{{ trigger.purchase_order_id }}"
+        notify_via: [email, whatsapp]
+        timeout: 24h
+        on_timeout:
+          action: erp.approval.escalate
+          config:
+            to_role: CFO
+
+    - id: lock_purchase_order
+      depends_on: request_finance_approval
+      condition: "approval.status == 'approved'"
+      action: erp.purchase_order.lock
+      config:
+        purchase_order_id: "{{ trigger.purchase_order_id }}"
+
+    - id: notify_vendor
+      depends_on: lock_purchase_order
+      action: erp.notification.send
+      config:
+        recipient: "{{ trigger.vendor_contact }}"
+        channel: whatsapp
+        template: po_approved
+        data:
+          po_number: "{{ trigger.po_number }}"
+          amount: "{{ trigger.total_amount }}"
+```
+
+---
+
+#### The Action Library (Pre-Built ERP Capabilities)
+
+Every module ships its own catalogue of actions that workflows can reference.
+The admin only sees actions from modules their tenant has enabled.
+
+| Namespace | Actions |
+|---|---|
+| `erp.approval.*` | `request`, `escalate`, `auto_approve`, `reject` |
+| `erp.purchase_order.*` | `lock`, `cancel`, `send_to_vendor` |
+| `erp.ledger.*` | `journal_entry`, `reconcile`, `create_payment` |
+| `erp.inventory.*` | `adjust_stock`, `create_transfer`, `trigger_reorder` |
+| `erp.gst.*` | `generate_invoice`, `submit_to_irp`, `create_eway_bill` |
+| `erp.notification.*` | `send` (email / WhatsApp / in-app) |
+| `erp.webhook.*` | `post` (call any external URL) |
+
+As new modules are built, they register their actions. Workflows pick them up automatically.
+
+---
+
+#### How This Compares to SAP and ERPNext
+
+| Dimension | SAP | ERPNext | Our Approach |
+|---|---|---|---|
+| **Storage** | Proprietary DB tables | Frappe DB (MySQL) | PostgreSQL (tenant-scoped) |
+| **Authoring tool** | ABAP graphical builder | GUI form (state machine only) | AI chat → YAML |
+| **Complexity ceiling** | Very high | Very low | High |
+| **Who can configure?** | ABAP consultant | Admin (limited) | Any admin (AI helps) |
+| **Setup time** | Weeks–months | Hours (but limited) | **Minutes** |
+| **Readability** | ❌ Proprietary | ⚠️ Form-based | ✅ Plain YAML |
+
+---
+
+#### Strategic Impact
+
+- **Implementation time:** Months → **Hours**
+- **Consultant dependency:** Eliminated for all standard workflows
+- **Power ceiling:** Matches SAP; far exceeds ERPNext
+- **Competitive moat:** No other ERP combines SAP-level power with AI-level simplicity
+- **SaaS-native:** All workflow configs live in the shared database, tenant-isolated by
+  `tenant_id` — one platform, any number of clients, zero per-tenant deployments
+
+> 💡 **The pitch:** *"Describe your business process in plain English. Our AI configures
+> your ERP for it. What SAP takes 6 months and a consultant to do — we do in minutes."*
 
 ---
 
@@ -1744,6 +1892,7 @@ User types:
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 1.0 | 2026-02-16 | Initial | Complete strategic document created |
+| 1.1 | 2026-02-27 | Strategy Update | Added Programmatic AI Workflow Builder (Section 7.9) — the Remotion paradigm for ERP workflows. Updated Sections 5.4 and 7.2 to reflect code-as-truth approach. Added to ToC. |
 
 **Approval:**
 

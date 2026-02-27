@@ -60,46 +60,39 @@ services:
       - erp-network
 
   # ─────────────────────────────────────────────────────────────────────────
-  # MinIO (S3-compatible object storage)
+  # SeaweedFS  (S3-compatible object storage — Apache 2.0 licensed)
+  #
+  # Exposes:
+  #   S3 API  → http://localhost:8333   (AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY)
+  #   Filer   → http://localhost:8888
+  #   Master  → http://localhost:9333
+  #   Admin   → http://localhost:23646
+  #
+  # Dev mode: single container running `weed server -s3` (master + volume +
+  # filer + S3 gateway in one process). For production use the full
+  # multi-component compose in docker/seaweedfs-compose.yml.
   # ─────────────────────────────────────────────────────────────────────────
-  minio:
-    image: docker.io/minio/minio:latest
-    container_name: erp-minio
+  seaweedfs:
+    image: chrislusf/seaweedfs:latest
+    container_name: erp-seaweedfs
     restart: unless-stopped
-    command: server /data --console-address ":9001"
-    environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+    # -s3 starts master + volume + filer + S3 gateway together.
+    # Credentials are set via standard AWS env vars; any value works in dev.
+    command: >-
+      server -dir=/data -s3 -s3.port=8333 -s3.config=/etc/seaweedfs/s3.config.json -ip.bind=0.0.0.0 -master.port=9333 -volume.port=8080 -filer.port=8888
     volumes:
-      - minio_data:/data
+      - seaweedfs_data:/data
+      - ./docker/seaweedfs/s3.config.json:/etc/seaweedfs/s3.config.json:ro
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - "8333:8333" # S3 API endpoint
+      - "8888:8888" # Filer UI
+      - "9333:9333" # Master UI
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
-      interval: 30s
+      test: [ "CMD", "wget", "-qO-", "http://localhost:9333/" ]
+      interval: 20s
       timeout: 10s
       retries: 5
-      start_period: 20s
-    networks:
-      - erp-network
-
-  # ─────────────────────────────────────────────────────────────────────────
-  # MinIO bucket initializer (one-shot)
-  # ─────────────────────────────────────────────────────────────────────────
-  minio-init:
-    image: docker.io/minio/mc:latest
-    container_name: erp-minio-init
-    depends_on:
-      minio:
-        condition: service_healthy
-    entrypoint: >
-      /bin/sh -c "
-        mc alias set local http://minio:9000 minioadmin minioadmin &&
-        mc mb --ignore-existing local/erp-files &&
-        mc anonymous set download local/erp-files/public &&
-        echo 'MinIO bucket ready.'
-      "
+      start_period: 15s
     networks:
       - erp-network
 
@@ -137,7 +130,9 @@ services:
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/erp_dev
       REDIS_URL: redis://redis:6379/0
-      MINIO_ENDPOINT: minio:9000
+      SEAWEEDFS_S3_ENDPOINT: http://seaweedfs:8333
+      AWS_ACCESS_KEY_ID: erp_dev
+      AWS_SECRET_ACCESS_KEY: erp_secret
       APP_ENV: development
       DEBUG: "true"
     volumes:
@@ -152,6 +147,8 @@ services:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
+      seaweedfs:
+        condition: service_healthy
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8000/health" ]
       interval: 30s
@@ -194,7 +191,7 @@ volumes:
     driver: local
   redis_data:
     driver: local
-  minio_data:
+  seaweedfs_data:
     driver: local
 
 # ---------------------------------------------------------------------------

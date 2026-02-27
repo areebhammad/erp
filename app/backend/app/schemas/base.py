@@ -2,9 +2,12 @@
 
 import uuid
 from datetime import datetime
-from typing import Annotated, Any
+from typing import Annotated, Any, Generic, TypeVar
 
 from pydantic import BaseModel, ConfigDict, Field
+
+
+T = TypeVar("T")
 
 
 class BaseSchema(BaseModel):
@@ -61,10 +64,10 @@ class CursorPaginationParams(BaseModel):
     limit: Annotated[int, Field(ge=1, le=100, description="Number of items")] = 20
 
 
-class PaginatedResponse(BaseSchema):
+class PaginatedResponse(BaseSchema, Generic[T]):
     """Generic paginated response wrapper."""
 
-    items: list[Any]
+    items: list[T]
     total: int
     page: int
     page_size: int
@@ -77,7 +80,7 @@ class PaginatedResponse(BaseSchema):
         total: int,
         page: int,
         page_size: int,
-    ) -> "PaginatedResponse":
+    ) -> "PaginatedResponse[Any]":
         """Create a paginated response."""
         total_pages = (total + page_size - 1) // page_size if page_size > 0 else 0
         return cls(
@@ -89,10 +92,10 @@ class PaginatedResponse(BaseSchema):
         )
 
 
-class CursorPaginatedResponse(BaseSchema):
+class CursorPaginatedResponse(BaseSchema, Generic[T]):
     """Cursor-based paginated response for large datasets."""
 
-    items: list[Any]
+    items: list[T]
     next_cursor: uuid.UUID | None
     has_more: bool
 

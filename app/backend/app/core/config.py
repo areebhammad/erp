@@ -4,7 +4,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic import Field, field_validator
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from app.core.constants import Environment
@@ -47,8 +47,16 @@ class Settings(BaseSettings):
     # API Settings
     # ==========================================================================
     api_v1_prefix: str = "/api/v1"
-    cors_origins: list[str] = Field(default=["http://localhost:3000"])
+    cors_origins_str: str = Field(
+        default="http://localhost:3000,http://localhost:5173",
+        alias="CORS_ORIGINS",
+    )
     cors_allow_credentials: bool = True
+
+    @property
+    def cors_origins(self) -> list[str]:
+        """Parse CORS origins from comma-separated string."""
+        return [o.strip() for o in self.cors_origins_str.split(",") if o.strip()]
 
     # ==========================================================================
     # Database Settings
@@ -109,13 +117,15 @@ class Settings(BaseSettings):
     qdrant_api_key: str | None = None
 
     # ==========================================================================
-    # Object Storage Settings
+    # Object Storage Settings (SeaweedFS — S3-compatible, Apache 2.0)
+    # boto3/aiobotocore connects via endpoint_url=seaweedfs_s3_endpoint.
+    # In production, point these at AWS S3 or any S3-compatible service.
     # ==========================================================================
-    minio_endpoint: str = "localhost:9000"
-    minio_access_key: str = "minioadmin"
-    minio_secret_key: str = "minioadmin"
-    minio_bucket: str = "erp-files"
-    minio_secure: bool = False
+    seaweedfs_s3_endpoint: str = "http://localhost:8333"
+    aws_access_key_id: str = "erp_dev"
+    aws_secret_access_key: str = "erp_secret"
+    s3_bucket_name: str = "erp-files"
+    s3_secure: bool = False
 
     # ==========================================================================
     # Email Settings
@@ -138,13 +148,6 @@ class Settings(BaseSettings):
     rate_limit_requests: int = Field(default=100, ge=1)
     rate_limit_window_seconds: int = Field(default=60, ge=1)
 
-    @field_validator("cors_origins", mode="before")
-    @classmethod
-    def parse_cors_origins(cls, v: str | list[str]) -> list[str]:
-        """Parse CORS origins from comma-separated string."""
-        if isinstance(v, str):
-            return [origin.strip() for origin in v.split(",")]
-        return v
 
 
 @lru_cache

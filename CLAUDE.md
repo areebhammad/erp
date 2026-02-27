@@ -33,7 +33,7 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 - **Database**: PostgreSQL (Structured), Qdrant Cloud (Vector)
 - **ORM/Schema**: SQLAlchemy (ORM), Alembic (Migrations), Pydantic (Validation)
 - **Cache/Queue**: Redis, Redis Queue (RQ)
-- **Storage**: MinIO (S3-compatible)
+- **Storage**: SeaweedFS (S3-compatible, Apache 2.0 licensed)
 - **Auth**: (refer to specific implementation)
 
 ### Infrastructure & Services

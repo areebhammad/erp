@@ -1,0 +1,24 @@
+{
+    "identities": [
+        {
+            "name": "erp_admin",
+            "credentials": [
+                {
+                    "accessKey": "erp_dev",
+                    "secretKey": "erp_secret"
+                }
+            ],
+            "actions": [
+                "Admin",
+                "Read",
+                "Write",
+                "List",
+                "Tagging"
+            ]
+        },
+        {
+            "name": "anonymous",
+            "actions": []
+        }
+    ]
+}

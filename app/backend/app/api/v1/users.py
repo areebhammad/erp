@@ -135,7 +135,7 @@ async def change_password(
 )
 async def list_users(
     db: DBSession,
-    ctx: TenantCtx = Depends(get_tenant_context),
+    ctx: TenantCtx,
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     is_active: bool | None = None,
@@ -200,7 +200,7 @@ async def list_users(
 async def create_user(
     user_data: UserCreate,
     db: DBSession,
-    ctx: TenantCtx = Depends(get_tenant_context),
+    ctx: TenantCtx,
 ) -> UserRead:
     """Create a new user (admin only)."""
     # Check if email exists
@@ -261,7 +261,7 @@ async def create_user(
 async def get_user(
     user_id: uuid.UUID,
     db: DBSession,
-    ctx: TenantCtx = Depends(get_tenant_context),
+    ctx: TenantCtx,
 ) -> UserWithRoles:
     """Get user by ID (admin only)."""
     result = await db.execute(
@@ -295,7 +295,7 @@ async def update_user(
     user_id: uuid.UUID,
     update_data: UserUpdate,
     db: DBSession,
-    ctx: TenantCtx = Depends(get_tenant_context),
+    ctx: TenantCtx,
 ) -> UserRead:
     """Update user (admin only)."""
     result = await db.execute(
@@ -362,7 +362,7 @@ async def update_user(
 async def delete_user(
     user_id: uuid.UUID,
     db: DBSession,
-    ctx: TenantCtx = Depends(get_tenant_context),
+    ctx: TenantCtx,
 ) -> MessageResponse:
     """Soft delete user (admin only)."""
     result = await db.execute(

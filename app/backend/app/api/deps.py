@@ -208,7 +208,7 @@ def require_permission(resource: str, action: str):
         if not await has_permission(db, user, resource, action):
             raise PermissionDeniedError(resource, action)
     
-    return Depends(permission_checker)
+    return permission_checker
 
 
 def require_superuser():
@@ -229,7 +229,7 @@ def require_superuser():
         if not user.is_superuser:
             raise PermissionDeniedError("system", "admin")
     
-    return Depends(superuser_checker)
+    return superuser_checker
 
 
 def require_admin():
@@ -250,7 +250,7 @@ def require_admin():
         if not ctx.is_admin and not ctx.is_superuser:
             raise PermissionDeniedError("system", "admin")
     
-    return Depends(admin_checker)
+    return admin_checker
 
 
 # Type aliases for cleaner function signatures

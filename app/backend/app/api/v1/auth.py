@@ -2,6 +2,8 @@
 
 from datetime import datetime, timezone
 
+from typing import Annotated, Any
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -241,8 +243,8 @@ async def refresh_token(
     description="Logout user and invalidate tokens.",
 )
 async def logout(
-    ctx = Depends(get_tenant_context),
-    db: DBSession = Depends(get_db),
+    ctx: Annotated[Any, Depends(get_tenant_context)],
+    db: DBSession,
 ) -> MessageResponse:
     """
     Logout user.

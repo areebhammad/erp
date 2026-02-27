@@ -31,7 +31,7 @@ Building an **AI-First Enterprise Resource Planning (ERP)** platform specificall
 - PostgreSQL 15+ (primary database with JSONB support)
 - Redis 7+ (caching, sessions, pub/sub)
 - Qdrant Cloud (vector database for AI/semantic search)
-- MinIO (S3-compatible object storage)
+- SeaweedFS (S3-compatible object storage, Apache 2.0 licensed)
 
 ### AI/ML
 - **Tambo** (frontend AI agent - tools, MCP, generative UI, conversation management)
@@ -201,7 +201,7 @@ Building an **AI-First Enterprise Resource Planning (ERP)** platform specificall
 - **India Post API** (postal services)
 
 ### Storage & Infrastructure
-- **MinIO** (self-hosted object storage)
+- **SeaweedFS** (self-hosted S3-compatible object storage, Apache 2.0)
 - **AWS S3** (fallback/production)
 - **Cloudflare CDN** (static assets)
 
