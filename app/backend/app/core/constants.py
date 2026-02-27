@@ -70,6 +70,12 @@ class ResourceType(str, Enum):
     ORDERS = "orders"
     REPORTS = "reports"
 
+    # Finance resources
+    ACCOUNTS = "accounts"
+    JOURNAL_ENTRIES = "journal_entries"
+    FISCAL_YEARS = "fiscal_years"
+    TAX_RATES = "tax_rates"
+
 
 class EventType(str, Enum):
     """Domain event types."""
@@ -91,6 +97,11 @@ class EventType(str, Enum):
     AUTH_LOGOUT = "auth.logout"
     AUTH_TOKEN_REFRESH = "auth.token_refresh"
     AUTH_PASSWORD_RESET = "auth.password_reset"
+
+    # Finance events
+    FINANCE_JOURNAL_POSTED = "finance.journal_entry.posted"
+    FINANCE_FISCAL_YEAR_CLOSED = "finance.fiscal_year.closed"
+
 
 
 class JobQueue(str, Enum):

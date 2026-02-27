@@ -149,6 +149,10 @@ from app.api.v1 import router as v1_router
 
 app.include_router(v1_router, prefix=settings.api_v1_prefix)
 
+# Import handlers to register event bus subscribers
+import app.finance.handlers  # noqa: F401
+
+
 
 def main() -> None:
     """Run the application with uvicorn."""

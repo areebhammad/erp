@@ -162,6 +162,19 @@ class DuplicateError(ERPEXception):
         )
 
 
+class ConflictError(ERPEXception):
+    """Resource state conflict error."""
+    def __init__(self, message: str) -> None:
+        super().__init__(message, status_code=409)
+
+
+class ForbiddenError(AuthorizationError):
+    """User is forbidden from taking this action."""
+    def __init__(self, message: str = "Action forbidden") -> None:
+        super().__init__(message, status_code=403)
+
+
+
 class EmailAlreadyExistsError(DuplicateError):
     """Email already exists in tenant."""
 

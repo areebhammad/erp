@@ -66,6 +66,18 @@ class TenantProvisionedEvent(BaseEvent):
     event_type: str = EventType.TENANT_PROVISIONED
 
 
+class FinanceJournalPostedEvent(BaseEvent):
+    """Event emitted when a journal entry is posted."""
+
+    event_type: str = EventType.FINANCE_JOURNAL_POSTED
+
+
+class FinanceFiscalYearClosedEvent(BaseEvent):
+    """Event emitted when a fiscal year is closed."""
+
+    event_type: str = EventType.FINANCE_FISCAL_YEAR_CLOSED
+
+
 # Event type mapping
 EVENT_TYPES: dict[str, type[BaseEvent]] = {
     EventType.USER_CREATED: UserCreatedEvent,
@@ -73,6 +85,8 @@ EVENT_TYPES: dict[str, type[BaseEvent]] = {
     EventType.USER_DELETED: UserDeletedEvent,
     EventType.TENANT_CREATED: TenantCreatedEvent,
     EventType.TENANT_PROVISIONED: TenantProvisionedEvent,
+    EventType.FINANCE_JOURNAL_POSTED: FinanceJournalPostedEvent,
+    EventType.FINANCE_FISCAL_YEAR_CLOSED: FinanceFiscalYearClosedEvent,
 }
 
 

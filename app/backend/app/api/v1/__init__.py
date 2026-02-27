@@ -3,6 +3,7 @@
 from fastapi import APIRouter
 
 from app.api.v1 import auth, users
+from app.finance.router import router as finance_router
 
 # Create v1 router
 router = APIRouter()
@@ -10,6 +11,8 @@ router = APIRouter()
 # Include sub-routers
 router.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 router.include_router(users.router, prefix="/users", tags=["Users"])
+router.include_router(finance_router)
+
 
 # Future routers will be added here:
 # from app.api.v1 import tenants, roles, permissions
