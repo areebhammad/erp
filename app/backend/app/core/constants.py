@@ -76,6 +76,11 @@ class ResourceType(str, Enum):
     FISCAL_YEARS = "fiscal_years"
     TAX_RATES = "tax_rates"
 
+    # Invoice resources
+    CUSTOMERS = "customers"
+    VENDORS = "vendors"
+    INVOICES = "invoices"
+
 
 class EventType(str, Enum):
     """Domain event types."""
@@ -101,6 +106,11 @@ class EventType(str, Enum):
     # Finance events
     FINANCE_JOURNAL_POSTED = "finance.journal_entry.posted"
     FINANCE_FISCAL_YEAR_CLOSED = "finance.fiscal_year.closed"
+
+    # Invoice events
+    INVOICE_SUBMITTED = "invoice.submitted"
+    INVOICE_CANCELLED = "invoice.cancelled"
+    INVOICE_CREDIT_NOTE_ISSUED = "invoice.credit_note_issued"
 
 
 

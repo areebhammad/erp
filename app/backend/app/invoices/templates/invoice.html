@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ invoice.invoice_type | capitalize }} {{ invoice.invoice_number }}</title>
+    <style>
+        body { font-family: "Helvetica", "Arial", sans-serif; font-size: 12pt; color: #333; }
+        .header { display: flex; justify-content: space-between; margin-bottom: 2rem; }
+        .company-name { font-size: 20pt; font-weight: bold; }
+        .invoice-title { font-size: 24pt; font-weight: bold; color: #555; text-transform: uppercase; }
+        .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+        .box { border: 1px solid #eee; padding: 1rem; }
+        .box h3 { margin-top: 0; font-size: 12pt; color: #666; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 2rem; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f8f9fa; font-weight: bold; }
+        .num { text-align: right; }
+        .totals { width: 50%; float: right; }
+        .totals th, .totals td { border: none; padding: 4px 8px; }
+        .totals th { text-align: left; font-weight: normal; }
+        .totals .grand-total th, .totals .grand-total td { font-weight: bold; font-size: 14pt; border-top: 2px solid #ddd; padding-top: 8px; margin-top: 4px; }
+        .footer { margin-top: 4rem; text-align: center; color: #888; font-size: 10pt; clear: both; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <div class="company-name">{{ tenant_name }}</div>
+        </div>
+        <div>
+            <div class="invoice-title">{{ invoice.invoice_type | replace('_', ' ') }}</div>
+            <div>Number: <strong>{{ invoice.invoice_number }}</strong></div>
+            <div>Date: {{ invoice.invoice_date }}</div>
+            <div>Due Date: {{ invoice.due_date }}</div>
+        </div>
+    </div>
+
+    <div class="details-grid">
+        <div class="box">
+            <h3>Bill To</h3>
+            <!-- Party info would go here (fetch party object to include address in a real app) -->
+            <div>Party ID: {{ invoice.party_id }}</div>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Description</th>
+                <th class="num">Qty</th>
+                <th class="num">Unit Price</th>
+                <th class="num">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for line in invoice.lines %}
+            <tr>
+                <td>{{ line.line_number }}</td>
+                <td>{{ line.description }}</td>
+                <td class="num">{{ line.quantity }}</td>
+                <td class="num">{{ line.unit_price }}</td>
+                <td class="num">{{ line.line_total }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <table class="totals">
+        <tr>
+            <th>Subtotal</th>
+            <td class="num">{{ invoice.currency_code }} {{ invoice.subtotal }}</td>
+        </tr>
+        <tr>
+            <th>Total Tax</th>
+            <td class="num">{{ invoice.currency_code }} {{ invoice.total_tax }}</td>
+        </tr>
+        <tr class="grand-total">
+            <th>Total</th>
+            <td class="num">{{ invoice.currency_code }} {{ invoice.total }}</td>
+        </tr>
+    </table>
+
+    <div class="footer">
+        {% if invoice.notes %}
+        <p><strong>Notes:</strong> {{ invoice.notes }}</p>
+        {% endif %}
+        {% if invoice.terms %}
+        <p><strong>Terms:</strong> {{ invoice.terms }}</p>
+        {% endif %}
+        <p>Thank you for your business!</p>
+    </div>
+</body>
+</html>

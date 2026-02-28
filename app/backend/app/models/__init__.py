@@ -6,6 +6,7 @@ from app.models.role import Permission, Role, UserRole
 from app.models.tenant import Tenant
 from app.models.user import User
 from app.finance.models import Account, FiscalYear, JournalEntry, JournalLine, TaxRate
+from app.invoices.models import Customer, Vendor, Invoice, InvoiceLine
 
 __all__ = [
     # Base classes
@@ -26,4 +27,9 @@ __all__ = [
     "JournalEntry",
     "JournalLine",
     "TaxRate",
+    # Invoice models
+    "Customer",
+    "Vendor",
+    "Invoice",
+    "InvoiceLine",
 ]
