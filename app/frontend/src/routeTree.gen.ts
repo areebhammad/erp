@@ -9,9 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as AppRouteImport } from './routes/_app'
+import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as AppIndexRouteImport } from './routes/_app.index'
+import { Route as DemoStorybookRouteImport } from './routes/demo/storybook'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as DevDesignRouteImport } from './routes/_dev.design'
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth.reset-password'
 import { Route as AuthRegisterRouteImport } from './routes/_auth.register'
@@ -19,6 +24,16 @@ import { Route as AuthLoginRouteImport } from './routes/_auth.login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth.forgot-password'
 import { Route as AppSettingsSecurityRouteImport } from './routes/_app.settings.security'
 
+const RssDotxmlRoute = RssDotxmlRouteImport.update({
+  id: '/rss.xml',
+  path: '/rss.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
@@ -27,10 +42,25 @@ const AppRoute = AppRouteImport.update({
   id: '/_app',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppRoute,
+} as any)
+const DemoStorybookRoute = DemoStorybookRouteImport.update({
+  id: '/demo/storybook',
+  path: '/demo/storybook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const DevDesignRoute = DevDesignRouteImport.update({
   id: '/_dev/design',
@@ -65,74 +95,123 @@ const AppSettingsSecurityRoute = AppSettingsSecurityRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
+  '/about': typeof AboutRoute
+  '/rss.xml': typeof RssDotxmlRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/design': typeof DevDesignRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/demo/storybook': typeof DemoStorybookRoute
+  '/blog/': typeof BlogIndexRoute
   '/settings/security': typeof AppSettingsSecurityRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
+  '/about': typeof AboutRoute
+  '/rss.xml': typeof RssDotxmlRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/design': typeof DevDesignRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/demo/storybook': typeof DemoStorybookRoute
+  '/blog': typeof BlogIndexRoute
   '/settings/security': typeof AppSettingsSecurityRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
   '/_auth': typeof AuthRouteWithChildren
+  '/about': typeof AboutRoute
+  '/rss.xml': typeof RssDotxmlRoute
   '/_auth/forgot-password': typeof AuthForgotPasswordRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/register': typeof AuthRegisterRoute
   '/_auth/reset-password': typeof AuthResetPasswordRoute
   '/_dev/design': typeof DevDesignRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/demo/storybook': typeof DemoStorybookRoute
   '/_app/': typeof AppIndexRoute
+  '/blog/': typeof BlogIndexRoute
   '/_app/settings/security': typeof AppSettingsSecurityRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
+    | '/rss.xml'
     | '/forgot-password'
     | '/login'
     | '/register'
     | '/reset-password'
     | '/design'
+    | '/blog/$slug'
+    | '/demo/storybook'
+    | '/blog/'
     | '/settings/security'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
+    | '/rss.xml'
     | '/forgot-password'
     | '/login'
     | '/register'
     | '/reset-password'
     | '/design'
+    | '/blog/$slug'
+    | '/demo/storybook'
+    | '/blog'
     | '/settings/security'
   id:
     | '__root__'
     | '/_app'
     | '/_auth'
+    | '/about'
+    | '/rss.xml'
     | '/_auth/forgot-password'
     | '/_auth/login'
     | '/_auth/register'
     | '/_auth/reset-password'
     | '/_dev/design'
+    | '/blog/$slug'
+    | '/demo/storybook'
     | '/_app/'
+    | '/blog/'
     | '/_app/settings/security'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
+  AboutRoute: typeof AboutRoute
+  RssDotxmlRoute: typeof RssDotxmlRoute
   DevDesignRoute: typeof DevDesignRoute
+  BlogSlugRoute: typeof BlogSlugRoute
+  DemoStorybookRoute: typeof DemoStorybookRoute
+  BlogIndexRoute: typeof BlogIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/rss.xml': {
+      id: '/rss.xml'
+      path: '/rss.xml'
+      fullPath: '/rss.xml'
+      preLoaderRoute: typeof RssDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_auth': {
       id: '/_auth'
       path: ''
@@ -147,12 +226,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog/': {
+      id: '/blog/'
+      path: '/blog'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app/': {
       id: '/_app/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/demo/storybook': {
+      id: '/demo/storybook'
+      path: '/demo/storybook'
+      fullPath: '/demo/storybook'
+      preLoaderRoute: typeof DemoStorybookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_dev/design': {
       id: '/_dev/design'
@@ -230,7 +330,12 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
+  AboutRoute: AboutRoute,
+  RssDotxmlRoute: RssDotxmlRoute,
   DevDesignRoute: DevDesignRoute,
+  BlogSlugRoute: BlogSlugRoute,
+  DemoStorybookRoute: DemoStorybookRoute,
+  BlogIndexRoute: BlogIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

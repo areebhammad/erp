@@ -7,9 +7,11 @@
   "addOnOptions": {},
   "git": true,
   "version": 1,
-  "framework": "react-cra",
+  "addOns": true,
+  "framework": "react",
   "chosenAddOns": [
     "eslint",
-    "nitro"
+    "nitro",
+    "storybook"
   ]
 }
